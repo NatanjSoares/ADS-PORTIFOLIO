@@ -1,0 +1,11 @@
+print(".....................")
+print("Bem-vindo ao sistema de cadastro de clientes")
+print(".....................")
+nome = input("Digite o nome do cliente: ")
+idade = input("Digite a idade do cliente: ")    
+
+email = input("Digite o email do cliente: ")
+cidade = input("Digite a cidade do cliente: ")
+estado = input("Digite o estado do cliente: ")
+telefone = input("Digite o telefone do cliente: ")
+print(f"\nCliente cadastrado com sucesso!\nNome: {nome}\nIdade: {idade}\nEmail: {emeil}\nCidade: {cidade}\nEstado: {estado}\nTelefone: {telefone}")
