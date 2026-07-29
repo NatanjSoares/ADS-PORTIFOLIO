@@ -1,11 +1,56 @@
-print(".....................")
-print("Bem-vindo ao sistema de cadastro de clientes")
-print(".....................")
-nome = input("Digite o nome do cliente: ")
-idade = input("Digite a idade do cliente: ")    
+import os
 
-email = input("Digite o email do cliente: ")
-cidade = input("Digite a cidade do cliente: ")
-estado = input("Digite o estado do cliente: ")
-telefone = input("Digite o telefone do cliente: ")
-print(f"\nCliente cadastrado com sucesso!\nNome: {nome}\nIdade: {idade}\nEmail: {emeil}\nCidade: {cidade}\nEstado: {estado}\nTelefone: {telefone}")
+os.system('cls' if os.name == 'nt' else 'clear')
+
+print("====================================")
+print(" SISTEMA DE CADASTRO DE CLIENTES ")
+print("====================================")
+
+opcao = input("1 - Cadastrar\n2 - Sair\n\nEscolha: ")
+
+if opcao == "1":
+
+    nome = input("Nome: ")
+    idade = input("Idade: ")
+    email = input("E-mail: ")
+    cidade = input("Cidade: ")
+    estado = input("Estado (UF): ")
+    telefone = input("Telefone: ")
+
+    print("\n===== RESULTADO =====")
+
+    if 5 <= len(nome) <= 35:
+        print(f"Nome: {nome}")
+    else:
+        print("Nome inválido!")
+
+    if idade.isdigit() and 0 < int(idade) <= 120:
+        print(f"Idade: {idade}")
+    else:
+        print("Idade inválida!")
+
+    if "@" in email and "." in email:
+        print(f"E-mail: {email}")
+    else:
+        print("E-mail inválido!")
+
+    if 1 <= len(cidade) <= 50:
+        print(f"Cidade: {cidade}")
+    else:
+        print("Cidade inválida!")
+
+    if len(estado) == 2 and estado.isalpha():
+        print(f"Estado: {estado.upper()}")
+    else:
+        print("Estado inválido!")
+
+    if telefone.isdigit() and len(telefone) in (10, 11):
+        print(f"Telefone: {telefone}")
+    else:
+        print("Telefone inválido!")
+
+elif opcao == "2":
+    print("Sistema encerrado.")
+
+else:
+    print("Opção inválida!")
