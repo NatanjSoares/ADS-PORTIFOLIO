@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>Midias em HTML 5</title>
+    <style> 
+        body{
+            background-color: aquamarine;
+        }
+    </style>
+</head>
+<body>
+   
+        <h1><em>Imagens dinamicas</em></h1>
+        <P>Tente abrir esse site em varios dispositivos diferentes ou simpismente aumente e diminua o tamanho do seu navegador</P>
+    <picture>
+        <source media="(max-width:750px )" srcset="Imagens/foto-p2.png" type="image/png">
+        <source media="(max-width:1050px )" srcset="Imagens/foto-m.png" type="image/png">
+        <img src="Imagens/foto-g.png" alt="imagem flexivel">
+    </picture>
+    <h1><em>Reproduzindo audio em html 5 </em></h1>
+    <p>vamos apreder reproduzir audio</p>
+    <audio src="miidas/Wildfire - Jessie Villa.mp3" controls autoplay loop></audio><br>
+    <audio src="miidas/happy-mistake.mp3" controls autoplay></audio><br>
+    
+    <audio preload="metadata" autoplay controls >
+        <source src="miidas/guanacast-33.mp3"type="audio/mpeg">
+    
+        <source src="miidas/guanacast-33.ogg"type="audio/ogg">
+    
+        <source src="miidas/guanacast-33.wav" type="audio/wav">
+    <p>infelizmente seu navegador não consegue reproduzir audio <a href="miidas/guanacast-33.mp3">clique aqui para baixar o aquivo mp3</a> </p>
+</audio>
+
+</body>
+</html>

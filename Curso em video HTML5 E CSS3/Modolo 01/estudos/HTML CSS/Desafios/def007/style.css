@@ -1,0 +1,5 @@
+@charset"UTF8";
+body{background-color: black;
+h1{text-align: center; font-family: 'Times New Roman', Times, serif 1.2em;color: brown;}
+p{text-align: center;}}
+img{ image-orientation: from-image;max-width:100% ;height: auto;}

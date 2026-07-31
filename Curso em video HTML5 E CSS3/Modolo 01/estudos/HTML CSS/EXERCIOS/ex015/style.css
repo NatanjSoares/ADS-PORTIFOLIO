@@ -1,0 +1,16 @@
+@charset"UTF8";
+
+
+
+        body{
+            background-color: rgb(160, 170, 127);font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;font-size: 20px;
+            
+            h1{color: rgb(42, 112, 165) ;background-color: rgb(0, 0, 0);}
+            
+            h2{color: rgb(80, 43, 226);background-color: azure;}
+            
+            p{color: azure;}
+
+
+        }
+    
