@@ -8,6 +8,7 @@ while True:
     print("1 - Cadastrar Cliente")
     print("2 - Listar Clientes")
     print("3 - Sair")
+    print("4 - Buscar Cliente por Nome")
     opcao = input("\nEscolha uma opção: ")
 
     if opcao == "1":
@@ -40,6 +41,19 @@ while True:
         print("\n===== Sistema encerrado =====")
         break
 
+
+        if not encontrado:
+            print("Cliente não encontrado.")
+    else:
+        print("Opção inválida! Tente novamente.")
+
+
+    print("\nDeseja continuar? (s/n)")
+    continuar = input().lower()
+            encontrado = True
+            break  (não precisa continuar procurando)
+    se não encontrado:
+        mostrar "Cliente não encontrado."
     else:
         print("Opção inválida! Tente novamente.")
 

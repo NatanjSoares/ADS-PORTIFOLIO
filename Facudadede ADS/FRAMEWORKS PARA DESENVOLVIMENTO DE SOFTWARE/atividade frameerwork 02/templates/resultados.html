@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado do Cálculo</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Resultado</h2>
+    <div class="resultado">
+        <p>Salário líquido: <strong>R$ {{ salario_liquido }}</strong></p>
+        <a href="/">Calcular novamente</a>
+    </div>
+</body>
+</html>

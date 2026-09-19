@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Salário Líquido</title>
+     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Calculadora de Salário Líquido</h2>
+    <form action="/resultado" method="post">
+        Salário Bruto: <input type="text" name="salario"><br><br>
+        Número de Dependentes: <input type="number" name="dependentes"><br><br>
+        <input type="submit" value="Calcular">
+    </form>
+</body>
+</html>
