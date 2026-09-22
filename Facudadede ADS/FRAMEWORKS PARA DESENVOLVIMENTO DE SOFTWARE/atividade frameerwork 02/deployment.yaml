@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calculadora-salario
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: calculadora-salario
+  template:
+    metadata:
+      labels:
+        app: calculadora-salario
+    spec:
+      containers:
+      - name: calculadora-salario
+        image: natanjsoares/calculadora-salario:latest
+        ports:
+        - containerPort: 5000
