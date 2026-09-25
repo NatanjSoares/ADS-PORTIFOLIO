@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>exemplo hover</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+           
+        }
+
+        div > p{
+            display: none;
+        }
+        
+        div:hover > p{
+            display: block;
+            color: rgb(252, 250,
+             250);
+             background-color: rgb(245, 4, 4);
+             width: 300px;
+        }   
+        
+        div:hover{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Exemplo de Efeito Hover</h1>
+    <p>Passe o mouse sobre os  elementos abaixo para ver o efeito hover:</p>
+    <div>
+            passando o mouse sobre mim
+        ><p>texto escondido</p>
+    </div>
+    
+</body>
+</html>
