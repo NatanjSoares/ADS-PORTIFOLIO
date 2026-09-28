@@ -35,28 +35,28 @@ while True:
                 print(f"Email: {cliente['email']}")
                 print(f"Cidade: {cliente['cidade']}")
                 print("------------------------")
-                print(f"\nLista de clientes completa: {len(clientes)}")
+            print(f"\nTotal de clientes: {len(clientes)}")
 
     elif opcao == "3":
         print("\n===== Sistema encerrado =====")
         break
 
-
+    elif opcao == "4":
+        busca = input("Nome para buscar: ").strip().lower()
+        encontrado = False
+        for cliente in clientes:
+            if busca in cliente["nome"].lower():
+                print(f"\nNome: {cliente['nome']}")
+                print(f"Idade: {cliente['idade']}")
+                print(f"Email: {cliente['email']}")
+                print(f"Cidade: {cliente['cidade']}")
+                print("------------------------")
+                encontrado = True
         if not encontrado:
-            print("Cliente não encontrado.")
+            print("\nCliente não encontrado.")
+
     else:
         print("Opção inválida! Tente novamente.")
-
-
-    print("\nDeseja continuar? (s/n)")
-    continuar = input().lower()
-            encontrado = True
-            break  (não precisa continuar procurando)
-    se não encontrado:
-        mostrar "Cliente não encontrado."
-    else:
-        print("Opção inválida! Tente novamente.")
-
 
     print("\nDeseja continuar? (s/n)")
     continuar = input().lower()
