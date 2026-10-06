@@ -1,10 +1,13 @@
-import sqlite3
 import os
-
+import sqlite3
+from contextlib import closing
 from pathlib import Path
 
 
-caminho_banco = Path(os.environ.get("DB_PATH", Path(__file__).parent / "produtos.db"))
+caminho_banco = Path(
+    os.environ.get("DB_PATH", Path(__file__).parent / "produtos.db")
+)
+caminho_banco.parent.mkdir(parents=True, exist_ok=True)
 
 
 def _conectar():
@@ -14,7 +17,7 @@ def _conectar():
 
 
 def inicializar_banco():
-    with _conectar() as conexao:
+    with closing(_conectar()) as conexao, conexao:
         conexao.execute(
             """
             CREATE TABLE IF NOT EXISTS produtos (
@@ -45,21 +48,21 @@ def inicializar_banco():
                         "Informática",
                         3500.00,
                         10,
-                        "Notebook para estudos e trabalho"
+                        "Notebook para estudos e trabalho",
                     ),
                     (
                         "Mouse Logitech",
                         "Periféricos",
                         120.00,
                         25,
-                        "Mouse óptico USB"
+                        "Mouse óptico USB",
                     ),
                 ],
             )
 
 
 def listar_todos():
-    with _conectar() as conexao:
+    with closing(_conectar()) as conexao, conexao:
         linhas = conexao.execute(
             "SELECT * FROM produtos ORDER BY nome"
         ).fetchall()
@@ -68,7 +71,7 @@ def listar_todos():
 
 
 def buscar_por_id(produto_id):
-    with _conectar() as conexao:
+    with closing(_conectar()) as conexao, conexao:
         linha = conexao.execute(
             "SELECT * FROM produtos WHERE id = ?",
             (produto_id,),
@@ -78,7 +81,7 @@ def buscar_por_id(produto_id):
 
 
 def buscar_por_nome(termo):
-    with _conectar() as conexao:
+    with closing(_conectar()) as conexao, conexao:
         linhas = conexao.execute(
             """
             SELECT * FROM produtos
@@ -92,7 +95,7 @@ def buscar_por_nome(termo):
 
 
 def criar(nome, categoria, preco, estoque, descricao):
-    with _conectar() as conexao:
+    with closing(_conectar()) as conexao, conexao:
         cursor = conexao.execute(
             """
             INSERT INTO produtos
@@ -107,15 +110,8 @@ def criar(nome, categoria, preco, estoque, descricao):
     return buscar_por_id(novo_id)
 
 
-def atualizar(
-    produto_id,
-    nome,
-    categoria,
-    preco,
-    estoque,
-    descricao
-):
-    with _conectar() as conexao:
+def atualizar(produto_id, nome, categoria, preco, estoque, descricao):
+    with closing(_conectar()) as conexao, conexao:
         conexao.execute(
             """
             UPDATE produtos
@@ -126,21 +122,14 @@ def atualizar(
                 descricao = ?
             WHERE id = ?
             """,
-            (
-                nome,
-                categoria,
-                preco,
-                estoque,
-                descricao,
-                produto_id,
-            ),
+            (nome, categoria, preco, estoque, descricao, produto_id),
         )
 
     return buscar_por_id(produto_id)
 
 
 def excluir(produto_id):
-    with _conectar() as conexao:
+    with closing(_conectar()) as conexao, conexao:
         cursor = conexao.execute(
             "DELETE FROM produtos WHERE id = ?",
             (produto_id,),
