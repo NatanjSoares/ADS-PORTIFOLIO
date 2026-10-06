@@ -1,0 +1,118 @@
+<!DOCTYPE html> 
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos</title>
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <h1>Produtos</h1>
+    <div class="topo">
+        <form method="GET" action="{{ url_for('listar') }}">
+            <input
+                type="text"
+                name="q"
+                placeholder="Buscar produto..."
+                value="{{ termo }}"
+            >
+
+            <button type="submit">
+                Buscar
+            </button>
+        </form>
+
+        <a class="botao" href="{{ url_for('novo') }}">
+            Novo produto
+        </a>
+
+    </div>
+
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Preço</th>
+                <th>Estoque</th>
+                <th>Descrição</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for produto in produtos %}
+
+            <tr>
+
+                <td>
+                    {{ produto.id }}
+                </td>
+
+                <td>
+                    {{ produto.nome }}
+                </td>
+
+                <td>
+                    {{ produto.categoria }}
+                </td>
+
+                <td>
+                    R$ {{ "%.2f"|format(produto.preco) }}
+                </td>
+
+                <td>
+                    {{ produto.estoque }}
+                </td>
+
+                <td>
+                    {{ produto.descricao }}
+                </td>
+
+                <td>
+
+                    <div class="acoes">
+
+                        <a
+                            class="botao"
+                            href="{{ url_for('editar', produto_id=produto.id) }}"
+                        >
+                            Editar
+                        </a>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('excluir', produto_id=produto.id) }}"
+                        >
+                            <button type="submit">
+                                Excluir
+                            </button>
+                        </form>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            {% else %}
+
+            <tr>
+                <td colspan="7">
+                    Nenhum produto encontrado.
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</body>
+</html>
+

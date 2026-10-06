@@ -1,0 +1,15 @@
+@charset "UTF-8";
+.home-card {
+  max-width: 480px;
+  margin: 60px auto;
+  padding: 32px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .1);
+  text-align: center;
+}
+
+.home-card h1 {
+  text-transform: uppercase;
+  margin-top: 0;
+}

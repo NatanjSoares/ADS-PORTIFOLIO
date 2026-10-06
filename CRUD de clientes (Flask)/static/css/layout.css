@@ -1,0 +1,12 @@
+@charset "UTF-8";
+
+nav{
+    display: flex;
+    gap: 16px;
+    padding: 12px 16px;
+    background: var(--cor);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+nav a{ color: #f0c1c1; text-decoration: none; font-weight: 600; }

@@ -1,0 +1,30 @@
+@charset "UTF-8";
+
+.sucesso, .erro {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+.sucesso{ background: #dcfce7; color: #05a241; }
+.erro{ background: #fee2e2; color: #f60303; }
+
+button, .botao {
+    padding: 10px 16px;
+    background: var(--cor);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover, .botao:hover {
+    opacity: 0.9;
+}
+.perigo {
+    background: #f87171;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}

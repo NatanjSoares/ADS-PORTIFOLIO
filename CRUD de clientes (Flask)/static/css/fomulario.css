@@ -1,0 +1,22 @@
+@charset "UTF-8";
+
+form {
+    
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    background: #07c22383;
+    padding: 20px;
+    border-radius: 8px;
+}
+label{
+    font-weight: 600;
+    color: #fff;
+}
+input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font: inherit;
+}

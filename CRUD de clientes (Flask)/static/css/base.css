@@ -1,0 +1,18 @@
+@charset "UTF-8";
+
+:root{
+    --cor: #16f40a63;
+    --fundo: #57b939b5;
+    --texto: #1f2937;
+}
+
+*{ box-sizing: border-box; }
+
+body{
+    font-family: noto, system-ui, sans-serif;
+    background: var(--fundo);
+    color: var(--texto);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px;
+}
