@@ -11,12 +11,12 @@ form {
 }
 label{
     font-weight: 600;
-    color: #fff;
+    color: #06f526;
 }
 input, textarea, select {
     width: 100%;
     padding: 10px;
-    border: 1px solid #d1d5db;
+    border: 1px solid #02ed54;
     border-radius: 6px;
     font: inherit;
 }

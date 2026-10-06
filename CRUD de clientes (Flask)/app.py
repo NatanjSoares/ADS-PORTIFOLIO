@@ -6,7 +6,10 @@ import os
 
 app = Flask(__name__)
 
-app.secret_key = os.environ.get("SECRET_KEY", "dev")
+app.secret_key = os.environ.get("SECRET_KEY")
+
+if not app.secret_key:
+    raise RuntimeError("Defina a variável de ambiente SECRET_KEY.")
 
 
 @app.route("/")
@@ -32,7 +35,7 @@ def listar():
     )
 
 
-@app.route("/home.html/novo", methods=["GET", "POST"])
+@app.route("/novo", methods=["GET", "POST"])
 def novo():
     """CREATE — cadastra um novo produto."""
 
@@ -68,7 +71,7 @@ def novo():
     )
 
 
-@app.route("/home.html/editar/<int:produto_id>", methods=["GET", "POST"])
+@app.route("/editar/<int:produto_id>", methods=["GET", "POST"])
 def editar(produto_id):
     """UPDATE — edita um produto existente."""
 
@@ -88,7 +91,7 @@ def editar(produto_id):
 
             return render_template(
                 "form.html",
-                produto=request.form,
+                produto={**request.form, "id": produto_id},
                 titulo="Editar produto"
             )
 
@@ -112,7 +115,7 @@ def editar(produto_id):
     )
 
 
-@app.route("/listar.html/excluir/<int:produto_id>", methods=["POST"])
+@app.route("/excluir/<int:produto_id>", methods=["POST"])
 def excluir(produto_id):
     """DELETE — remove um produto."""
 

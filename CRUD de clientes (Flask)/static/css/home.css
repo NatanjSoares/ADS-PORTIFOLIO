@@ -1,15 +1,17 @@
 @charset "UTF-8";
 .home-card {
   max-width: 480px;
-  margin: 60px auto;
+  margin: 30px auto;
   padding: 32px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, .1);
+  background: #039d417d;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .1);
   text-align: center;
 }
 
 .home-card h1 {
+  background: #16f40a63;
+  color: #fff;  
   text-transform: uppercase;
   margin-top: 0;
 }
