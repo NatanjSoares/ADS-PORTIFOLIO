@@ -1,12 +1,42 @@
 @charset "UTF-8";
 
-form { background: var(--marfim-claro); border: 1px solid var(--dourado); }
-label { color: var(--verde); }
+form {
+  display: grid;
+  gap: 18px;
+  padding: 28px;
+  background: var(--marfim-claro);
+  border: 1px solid var(--dourado);
+  border-radius: 8px;
+}
+
+label {
+  color: var(--verde);
+  margin-bottom: 4px;
+}
+
 input, textarea, select {
+  padding: 12px 14px;
   background: #fff;
   border: 1px solid var(--dourado-escuro);
 }
+
 input:focus, textarea:focus {
   outline: 2px solid var(--dourado);
   border-color: var(--verde);
 }
+
+textarea { min-height: 120px; }
+
+form button {
+  justify-self: start;
+  margin-top: 8px;
+}
+
+/* formulário de busca (mais específico, sobrescreve o form) */
+.busca {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.busca input { flex: 1; }

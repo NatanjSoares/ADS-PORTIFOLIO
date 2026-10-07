@@ -1,0 +1,27 @@
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 220px;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+
+body::before {
+  left: 0;
+  background-image: url("../img/lateral.jpg");
+}
+
+body::after {
+  right: 0;
+  background-image: url("../img/lateral.jpg");
+}
+
+/* some em telas que não têm espaço sobrando */
+@media (max-width: 1360px) {
+  body::before,
+  body::after { display: none; }
+}
