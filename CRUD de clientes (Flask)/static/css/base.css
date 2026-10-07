@@ -1,18 +1,30 @@
 @charset "UTF-8";
 
-:root{
-    --cor: #16f40a63;
-    --fundo: #57b939b5;
-    --texto: #1f2937;
+:root {
+  --verde: #00382F;
+  --verde-profundo: #143427;
+  --dourado: #C59F6D;
+  --dourado-escuro: #94744D;
+  --marfim: #EBD6C1;
+  --marfim-claro: #F3E0C7;
+  --grafite: #212A2D;
+
+  --fonte-titulo: "Cormorant Garamond", Georgia, serif;
+  --fonte-texto: "Montserrat", system-ui, sans-serif;
 }
 
-*{ box-sizing: border-box; }
+* { box-sizing: border-box; }
 
-body{
-    font-family: noto, system-ui, sans-serif;
-    background: var(--fundo);
-    color: var(--texto);
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 16px;
+body {
+  font-family: var(--fonte-texto);
+  background: var(--marfim);
+  color: var(--grafite);
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+h1, h2, h3 {
+  font-family: var(--fonte-titulo);
+  color: var(--verde);
 }

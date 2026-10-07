@@ -1,30 +1,18 @@
 @charset "UTF-8";
 
-.sucesso, .erro {
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 16px;
-}
-.sucesso{ background: #dcfce7; color: #05a241; }
-.erro{ background: #fee2e2; color: #f60303; }
-
 button, .botao {
-    padding: 10px 16px;
-    background: var(--cor);
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+  background: var(--verde);
+  color: var(--marfim-claro);
+  border: 1px solid var(--dourado);
+  border-radius: 4px;
+  transition: .3s;
 }
-
 button:hover, .botao:hover {
-    opacity: 0.9;
+  background: var(--dourado);
+  color: var(--verde);
+  opacity: 1;
 }
-.perigo {
-    background: #f87171;
-    color: #fff;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-}
+.perigo { background: #8b2e2e; border-color: #8b2e2e; }
+
+.sucesso { background: var(--marfim-claro); color: var(--verde); border-left: 4px solid var(--verde); }
+.erro    { background: #f3d9d4; color: #7a1f1f; border-left: 4px solid #8b2e2e; }

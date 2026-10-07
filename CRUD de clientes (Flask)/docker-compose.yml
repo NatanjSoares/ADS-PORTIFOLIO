@@ -3,10 +3,9 @@ services:
     build: .
     ports:
       - "5001:5000"
+    env_file: .env
     environment:
-      SECRET_KEY: troque-isto
+      FLASK_DEBUG: "1"
     volumes:
-      - dados:/data
-
-volumes:
-  dados:
+      - ./data:/data
+      - .:/app

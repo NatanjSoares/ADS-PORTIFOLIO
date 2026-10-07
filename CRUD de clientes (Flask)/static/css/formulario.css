@@ -1,22 +1,12 @@
 @charset "UTF-8";
 
-form {
-    
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-    background: #07c22383;
-    padding: 20px;
-    border-radius: 8px;
-}
-label{
-    font-weight: 600;
-    color: #06f526;
-}
+form { background: var(--marfim-claro); border: 1px solid var(--dourado); }
+label { color: var(--verde); }
 input, textarea, select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #02ed54;
-    border-radius: 6px;
-    font: inherit;
+  background: #fff;
+  border: 1px solid var(--dourado-escuro);
+}
+input:focus, textarea:focus {
+  outline: 2px solid var(--dourado);
+  border-color: var(--verde);
 }
