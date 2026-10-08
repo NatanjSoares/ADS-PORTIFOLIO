@@ -1,8 +1,10 @@
 @charset "UTF-8";
 
-nav{
-    background-color: var(--verde);
-    border-bottom: 3px solid var(--dourado);
+n   nav a { color: var(--marfim-claro); text-decoration: none; }
+   nav a:hover { color: var(--dourado); }
+.rodape {
+  margin-top: 40px;
+  text-align: center;
+  color: var(--grafite);
 }
-
-nav a{ color: var(--marim-claro); nav a:hover { color: var(--dourado); } }
+   .form-inline { display: inline; padding: 0; background: none; border: 0; }

@@ -9,16 +9,8 @@ form {
   border-radius: 8px;
 }
 
-label {
-  color: var(--verde);
-  margin-bottom: 4px;
-}
-
-input, textarea, select {
-  padding: 12px 14px;
-  background: #fff;
-  border: 1px solid var(--dourado-escuro);
-}
+  label { display: block; margin-bottom: 6px; }
+  input, textarea, select { display: block; width: 100%; }
 
 input:focus, textarea:focus {
   outline: 2px solid var(--dourado);

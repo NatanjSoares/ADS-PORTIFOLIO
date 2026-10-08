@@ -6,6 +6,7 @@ button, .botao {
   border: 1px solid var(--dourado);
   border-radius: 4px;
   transition: .3s;
+  margin: 16px 0;
 }
 button:hover, .botao:hover {
   background: var(--dourado);
@@ -16,3 +17,5 @@ button:hover, .botao:hover {
 
 .sucesso { background: var(--marfim-claro); color: var(--verde); border-left: 4px solid var(--verde); }
 .erro    { background: #f3d9d4; color: #7a1f1f; border-left: 4px solid #8b2e2e; }
+a.botao, button { text-decoration: none; }
+a { color: var(--verde); }

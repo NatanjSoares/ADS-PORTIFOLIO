@@ -1,54 +1,27 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de Produtos</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+{% extends "base.html" %}
 
+{% block titulo %}Gestão de Produtos{% endblock %}
 
-</head>
-<body>
-<section class="hero">
-  <div class="hero-conteudo">
+{% block conteudo %}
+  <section class="hero" aria-label="ADONAI Prata e Semijoias"></section>
+
+  <section class="hero-texto">
     <h1>Elegância que permanece.</h1>
     <p>Prata e semijoias para momentos que merecem ser eternizados.</p>
     <a class="botao" href="{{ url_for('listar') }}">Ver produtos</a>
-  </div>
-</section>
+  </section>
 
- <h1 class="home-card"> Sistema de Gestão</h1>
+  <section class="cards">
+    <article class="card">
+      <h3>Produtos</h3>
+      <p>Consulte, edite e exclua produtos.</p>
+      <a class="botao" href="{{ url_for('listar') }}">Ver produtos</a>
+    </article>
 
-<section class="home-card" >
-
-    <h2> Gestão de Produtos </h2>
-    <p>Gerencie seus produtos de forma simples,rápida e organizada.</p>
-    <a class="botao"href="{{ url_for('listar') }}">
-                Acessar produtos</a>
-
-    
-<div >
-
-    <h3>Produtos </h3>
-   <p>Consulte, cadastre, edite e exclua produtos.</p>
-   <a class="botao"href="{{ url_for('listar') }}">Ver produtos</a>
-</div>
-<div >
-   <h3>Novo produto</h3>
+    <article class="card">
+      <h3>Novo produto</h3>
       <p>Cadastre um novo produto no sistema.</p>
-<a class="botao"href="{{ url_for('novo') }}" >Cadastrar</a>
-</div>
-<div>
-   <h3>Estoque</h3>
-     <p>Consulte a quantidade disponível de cada produto.</p>
-    <a class="botao"href="{{ url_for('listar') }}"> Consultar</a>
-</div>
-</section>
-<footer>
-
-        Sistema de Gestão de Produtos
-
-</footer>
-</body>
-</html>
-
+      <a class="botao" href="{{ url_for('novo') }}">Cadastrar</a>
+    </article>
+  </section>
+{% endblock %}
