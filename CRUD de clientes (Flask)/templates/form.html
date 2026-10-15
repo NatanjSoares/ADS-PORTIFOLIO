@@ -19,9 +19,28 @@
            value="{{ produto.categoria if produto else '' }}">
   </div>
 
+    <div>
+    <label for="custo">Custo (R$):</label>
+    <input type="number" id="custo" name="custo" step="0.01" min="0"
+           value="{{ produto.custo if produto and produto.custo else '' }}">
+  </div>
+
   <div>
-    <label for="preco">Preço:</label>
-    <input type="number" id="preco" name="preco" step="0.01" min="0" required
+    <label for="multiplicador">Multiplicador:</label>
+    <select id="multiplicador" name="multiplicador">
+      <option value="">Sem multiplicador (preço manual)</option>
+      {% for m in multiplicadores %}
+      <option value="{{ m.valor }}"
+        {% if produto and (produto.get('multiplicador', 0)|float) == m.valor %}selected{% endif %}
+        {{ m.nome }} (×{{ m.valor }})
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div>
+    <label for="preco">Preço de venda (R$):</label>
+    <input type="number" id="preco" name="preco" step="0.01" min="0"
            value="{{ produto.preco if produto else '' }}">
   </div>
 
@@ -39,4 +58,7 @@
   <button type="submit">Salvar</button>
   <a href="{{ url_for('listar') }}">Cancelar</a>
 </form>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/preco.js') }}"></script>
 {% endblock %}

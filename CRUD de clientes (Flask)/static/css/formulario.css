@@ -9,6 +9,8 @@ form {
   border-radius: 8px;
 }
 
+.form-inline { display: inline; padding: 0; background: none; border: 0; }
+
   label { display: block; margin-bottom: 6px; }
   input, textarea, select { display: block; width: 100%; }
 

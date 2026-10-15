@@ -27,3 +27,14 @@ def test_excluir(produtos):
     assert produtos.excluir(novo["id"]) is True
     assert produtos.buscar_por_id(novo["id"]) is None
     assert produtos.excluir(novo["id"]) is False
+
+def test_preco_calculado_pelo_multiplicador(produtos):
+    novo = produtos.criar("Anel", "Joia", 0, 1, "x", custo=20.0, multiplicador=2.5)
+    assert novo["preco"] == 50.0
+
+def test_multiplicador_fora_da_faixa_e_rejeitado(client):
+    resposta = client.post("/novo", data={
+        "nome": "Anel", "categoria": "Joia", "custo": "20",
+        "multiplicador": "5", "estoque": "1", "descricao": "x",
+    })
+    assert "entre 1,5 e 4" in resposta.get_data(as_text=True)

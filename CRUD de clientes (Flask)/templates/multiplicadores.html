@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block titulo %}Multiplicadores{% endblock %}
+
+{% block conteudo %}
+<h1>Multiplicadores de preço</h1>
+<p>Preço de venda = custo × multiplicador (de 1,5 a 4).</p>
+
+<table>
+  <tr><th>Nome</th><th>Valor</th><th>Ações</th></tr>
+  {% for m in multiplicadores %}
+  <tr>
+    <form class="form-inline" method="POST" action="{{ url_for('multiplicadores_view') }}">
+      <input type="hidden" name="id" value="{{ m.id }}">
+      <td><input type="text" name="nome" value="{{ m.nome }}" required></td>
+      <td><input type="number" name="valor" value="{{ m.valor }}" min="1.5" max="4" step="0.1" required></td>
+      <td>
+        <button type="submit">Salvar</button>
+        <button type="submit" class="perigo"
+                formaction="{{ url_for('excluir_multiplicador', mult_id=m.id) }}"
+                onclick="return confirm('Excluir este multiplicador?')">Excluir</button>
+      </td>
+    </form>
+  </tr>
+  {% endfor %}
+</table>
+
+<form method="POST" action="{{ url_for('multiplicadores_view') }}">
+  <h3>Novo multiplicador</h3>
+  <div><label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" required></div>
+  <div><label for="valor">Valor (1,5 a 4):</label>
+    <input type="number" id="valor" name="valor" min="1.5" max="4" step="0.1" required></div>
+  <button type="submit">Adicionar</button>
+</form>
+{% endblock %}

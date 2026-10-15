@@ -11,6 +11,25 @@ app.secret_key = os.environ.get("SECRET_KEY")
 if not app.secret_key:
     raise RuntimeError("Defina a variável de ambiente SECRET_KEY.")
 
+def _numero(texto):
+    try:
+        return float(texto)
+    except (TypeError, ValueError):
+        return None
+
+
+def preco_do_formulario(form):
+    custo = _numero(form.get("custo", "").strip())
+    mult = _numero(form.get("multiplicador", "").strip())
+    if custo and mult:
+        return produtos.calcular_preco(custo, mult)
+    return _numero(form.get("preco", "").strip())
+
+
+@app.context_processor
+def injetar_multiplicadores():
+    return {"multiplicadores": produtos.listar_multiplicadores()}
+
 
 @app.route("/")
 def home():
@@ -55,9 +74,11 @@ def novo():
         produtos.criar(
             nome=request.form["nome"].strip(),
             categoria=request.form["categoria"].strip(),
-            preco=float(request.form["preco"]),
+            preco=preco_do_formulario(request.form),
             estoque=int(request.form["estoque"]),
-            descricao=request.form["descricao"].strip()
+            descricao=request.form["descricao"].strip(),
+            custo=_numero(request.form.get("custo", "")) or 0,
+            multiplicador=_numero(request.form.get("multiplicador", "")) or 0,
         )
 
         flash("Produto cadastrado com sucesso.", "sucesso")
@@ -95,13 +116,17 @@ def editar(produto_id):
                 titulo="Editar produto"
             )
 
+        
+          
         produtos.atualizar(
             produto_id,
             nome=request.form["nome"].strip(),
             categoria=request.form["categoria"].strip(),
-            preco=float(request.form["preco"]),
+            preco=preco_do_formulario(request.form),
             estoque=int(request.form["estoque"]),
-            descricao=request.form["descricao"].strip()
+            descricao=request.form["descricao"].strip(),
+            custo=_numero(request.form.get("custo", "")) or 0,
+            multiplicador=_numero(request.form.get("multiplicador", "")) or 0,
         )
 
         flash("Produto atualizado com sucesso.", "sucesso")
@@ -135,6 +160,8 @@ def validar_formulario(form):
     preco = form.get("preco", "").strip()
     estoque = form.get("estoque", "").strip()
     descricao = form.get("descricao", "").strip()
+    custo = form.get("custo", "").strip()
+    mult = form.get("multiplicador", "").strip()
 
     if not nome:
         return "O nome do produto é obrigatório."
@@ -142,17 +169,29 @@ def validar_formulario(form):
     if not categoria:
         return "A categoria é obrigatória."
 
-    if not preco:
-        return "O preço é obrigatório."
+    if custo or mult:
+        valor_custo = _numero(custo)
+        valor_mult = _numero(mult)
 
-    try:
-        preco = float(preco)
+        if valor_custo is None or valor_custo < 0:
+            return "Informe um custo válido."
 
-        if preco < 0:
-            return "O preço não pode ser negativo."
+        if valor_mult is None or not (
+            produtos.MULT_MIN <= valor_mult <= produtos.MULT_MAX
+        ):
+            return "O multiplicador deve estar entre 1,5 e 4."
+    else:
+        if not preco:
+            return "O preço é obrigatório."
 
-    except ValueError:
-        return "Informe um preço válido."
+        try:
+            preco = float(preco)
+
+            if preco < 0:
+                return "O preço não pode ser negativo."
+
+        except ValueError:
+            return "Informe um preço válido."
 
     if not estoque:
         return "O estoque é obrigatório."
@@ -170,6 +209,33 @@ def validar_formulario(form):
         return "A descrição é obrigatória."
 
     return None
+@app.route("/multiplicadores", methods=["GET", "POST"])
+def multiplicadores_view():
+    if request.method == "POST":
+        nome = request.form.get("nome", "").strip()
+        valor = _numero(request.form.get("valor", ""))
+        mult_id = request.form.get("id")
+
+        if not nome:
+            flash("O nome do multiplicador é obrigatório.", "erro")
+        elif valor is None or not (produtos.MULT_MIN <= valor <= produtos.MULT_MAX):
+            flash("O valor deve estar entre 1,5 e 4.", "erro")
+        else:
+            if mult_id:
+                produtos.atualizar_multiplicador(int(mult_id), nome, valor)
+            else:
+                produtos.criar_multiplicador(nome, valor)
+            flash("Multiplicador salvo.", "sucesso")
+        return redirect(url_for("multiplicadores_view"))
+
+    return render_template("multiplicadores.html")
+
+
+@app.route("/multiplicadores/<int:mult_id>/excluir", methods=["POST"])
+def excluir_multiplicador(mult_id):
+    produtos.excluir_multiplicador(mult_id)
+    flash("Multiplicador excluído.", "sucesso")
+    return redirect(url_for("multiplicadores_view"))
 
 
 if __name__ == "__main__":
