@@ -13,6 +13,7 @@
     <a href="{{ url_for('listar') }}">Produtos</a>
     <a href="{{ url_for('novo') }}">Novo produto</a>
     <a href="{{ url_for('multiplicadores_view') }}">Multiplicadores</a>
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
   </nav>
 
   {% with mensagens = get_flashed_messages(with_categories=true) %}
@@ -22,7 +23,9 @@
   {% endwith %}
 
   {% block conteudo %}{% endblock %}
+ 
 
   <footer class="rodape">Sistema de Gestão de Produtos</footer>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

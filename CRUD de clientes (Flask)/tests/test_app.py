@@ -28,3 +28,9 @@ def test_preco_negativo_e_rejeitado(client):
         "estoque": "1", "descricao": "x",
     })
     assert "negativo" in resposta.get_data(as_text=True)
+
+def test_dashboard_abre(client):
+    assert client.get("/dashboard").status_code == 200
+def test_form_novo_lista_multiplicadores(client):
+    html = client.get("/novo").get_data(as_text=True)
+    assert "Básico" in html

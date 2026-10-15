@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block titulo %}Dashboard{% endblock %}
+
+{% block conteudo %}
+<h1>Dashboard</h1>
+
+<section class="kpis">
+  <article class="card">
+    <h3>Produtos</h3>
+    <p class="kpi">{{ resumo.total_produtos }}</p>
+  </article>
+  <article class="card">
+    <h3>Itens em estoque</h3>
+    <p class="kpi">{{ resumo.itens_estoque }}</p>
+  </article>
+  <article class="card">
+    <h3>Valor do estoque</h3>
+    <p class="kpi">R$ {{ "%.2f"|format(resumo.valor_estoque) }}</p>
+  </article>
+  <article class="card">
+    <h3>Margem média</h3>
+    <p class="kpi">
+      {% if resumo.margem_media is not none %}{{ "%.1f"|format(resumo.margem_media) }}%{% else %}—{% endif %}
+    </p>
+  </article>
+</section>
+
+<section class="graficos">
+  <article class="card">
+    <h3>Estoque por produto</h3>
+    <canvas id="grafico-estoque"></canvas>
+  </article>
+  <article class="card">
+    <h3>Custo × preço de venda</h3>
+    <canvas id="grafico-preco"></canvas>
+  </article>
+  <article class="card">
+    <h3>Produtos por categoria</h3>
+    <canvas id="grafico-categoria"></canvas>
+  </article>
+</section>
+
+<script type="application/json" id="dados-dashboard">{{ dados|tojson }}</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,23 @@
+@charset "UTF-8";
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi {
+  margin: 8px 0 0;
+  font-family: var(--fonte-titulo);
+  font-size: 1.8rem;
+  color: var(--verde);
+}
+
+.graficos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.graficos .card { text-align: left; }
+.graficos canvas { max-height: 320px; }

@@ -237,6 +237,39 @@ def excluir_multiplicador(mult_id):
     flash("Multiplicador excluído.", "sucesso")
     return redirect(url_for("multiplicadores_view"))
 
+@app.route("/dashboard")
+def dashboard():
+    itens = produtos.listar_todos()
+    com_custo = [p for p in itens if p["custo"]]
+
+    categorias = {}
+    for p in itens:
+        categorias[p["categoria"]] = categorias.get(p["categoria"], 0) + 1
+
+    margens = [
+        (p["preco"] - p["custo"]) / p["preco"] * 100
+        for p in com_custo
+        if p["preco"]
+    ]
+
+    dados = {
+        "nomes": [p["nome"] for p in itens],
+        "estoque": [p["estoque"] for p in itens],
+        "custo_nomes": [p["nome"] for p in com_custo],
+        "custos": [p["custo"] for p in com_custo],
+        "precos": [p["preco"] for p in com_custo],
+        "categorias": list(categorias.keys()),
+        "qtd_categorias": list(categorias.values()),
+    }
+
+    resumo = {
+        "total_produtos": len(itens),
+        "itens_estoque": sum(p["estoque"] for p in itens),
+        "valor_estoque": sum(p["preco"] * p["estoque"] for p in itens),
+        "margem_media": sum(margens) / len(margens) if margens else None,
+    }
+
+    return render_template("dashboard.html", dados=dados, resumo=resumo)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000,

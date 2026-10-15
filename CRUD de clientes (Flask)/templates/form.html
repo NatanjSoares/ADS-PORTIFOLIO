@@ -27,15 +27,15 @@
 
   <div>
     <label for="multiplicador">Multiplicador:</label>
-    <select id="multiplicador" name="multiplicador">
-      <option value="">Sem multiplicador (preço manual)</option>
-      {% for m in multiplicadores %}
-      <option value="{{ m.valor }}"
-        {% if produto and (produto.get('multiplicador', 0)|float) == m.valor %}selected{% endif %}
-        {{ m.nome }} (×{{ m.valor }})
-      </option>
-      {% endfor %}
-    </select>
+   <select id="multiplicador" name="multiplicador">
+  <option value="">Sem multiplicador (preço manual)</option>
+  {% for m in multiplicadores %}
+  <option value="{{ m.valor }}"
+    {% if produto and (produto.get('multiplicador', 0)|float) == m.valor %}selected{% endif %}>
+    {{ m.nome }} (×{{ m.valor }})
+  </option>
+  {% endfor %}
+</select>
   </div>
 
   <div>
