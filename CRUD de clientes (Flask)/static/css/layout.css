@@ -8,3 +8,5 @@ n   nav a { color: var(--marfim-claro); text-decoration: none; }
   color: var(--grafite);
 }
    .form-inline { display: inline; padding: 0; background: none; border: 0; }
+
+   nav form { margin-left: auto; }

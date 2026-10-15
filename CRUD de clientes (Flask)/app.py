@@ -1,15 +1,67 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session 
 
 import produtos
 import os
+from datetime import timedelta
+
+import usuarios
 
 
 app = Flask(__name__)
-
+app.secret_key = "Mariah02"
+app.permanent_session_lifetime = timedelta(hours=1)
 app.secret_key = os.environ.get("SECRET_KEY")
 
 if not app.secret_key:
     raise RuntimeError("Defina a variável de ambiente SECRET_KEY.")
+
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=os.environ.get("COOKIE_SEGURO") == "1",
+    PERMANENT_SESSION_LIFETIME=timedelta(hours=8),
+)
+
+usuarios.inicializar_usuarios()
+
+ROTAS_PUBLICAS = {"login", "static"}
+
+
+@app.before_request
+def exigir_login():
+    if request.endpoint in ROTAS_PUBLICAS:
+        return None
+    if not session.get("usuario"):
+        return redirect(url_for("login"))
+
+if not app.secret_key:
+    raise RuntimeError("Defina a variável de ambiente SECRET_KEY.")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if session.get("usuario"):
+        return redirect(url_for("home"))
+
+    if request.method == "POST":
+        usuario = request.form.get("usuario", "").strip()
+        senha = request.form.get("senha", "")
+
+        if usuarios.verificar_login(usuario, senha):
+            session.clear()
+            session["usuario"] = usuario
+            session.permanent = True
+            return redirect(url_for("home"))
+
+        flash("Usuário ou senha inválidos.", "erro")
+
+    return render_template("login.html")
+
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    session.clear()
+    flash("Você saiu do sistema.", "sucesso")
+    return redirect(url_for("login"))
 
 def _numero(texto):
     try:
