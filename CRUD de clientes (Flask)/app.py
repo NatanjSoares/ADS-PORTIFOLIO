@@ -8,7 +8,6 @@ import usuarios
 
 
 app = Flask(__name__)
-app.secret_key = "Mariah02"
 app.permanent_session_lifetime = timedelta(hours=1)
 app.secret_key = os.environ.get("SECRET_KEY")
 
