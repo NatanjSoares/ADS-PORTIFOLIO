@@ -8,6 +8,7 @@ from flask_wtf.csrf import CSRFError, CSRFProtect
 
 import produtos
 import usuarios
+import dinheiro
 
 
 app = Flask(__name__)
@@ -44,8 +45,7 @@ def exigir_login():
     if not session.get("usuario"):
         return redirect(url_for("login"))
 
-if not app.secret_key:
-    raise RuntimeError("Defina a variável de ambiente SECRET_KEY.")
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -80,12 +80,19 @@ def _numero(texto):
         return None
 
 
+def _decimal_ou_none(texto):
+    try:
+        return dinheiro.para_decimal(texto)
+    except ValueError:
+        return None
+
+
 def preco_do_formulario(form):
-    custo = _numero(form.get("custo", "").strip())
-    mult = _numero(form.get("multiplicador", "").strip())
+    custo = _decimal_ou_none(form.get("custo", ""))
+    mult = _numero(form.get("multiplicador", ""))
     if custo and mult:
         return produtos.calcular_preco(custo, mult)
-    return _numero(form.get("preco", "").strip())
+    return _decimal_ou_none(form.get("preco", ""))
 
 
 @app.context_processor
@@ -139,7 +146,8 @@ def novo():
             preco=preco_do_formulario(request.form),
             estoque=int(request.form["estoque"]),
             descricao=request.form["descricao"].strip(),
-            custo=_numero(request.form.get("custo", "")) or 0,
+        
+            custo=_decimal_ou_none(request.form.get("custo", "")) or 0,
             multiplicador=_numero(request.form.get("multiplicador", "")) or 0,
         )
 
@@ -187,7 +195,7 @@ def editar(produto_id):
             preco=preco_do_formulario(request.form),
             estoque=int(request.form["estoque"]),
             descricao=request.form["descricao"].strip(),
-            custo=_numero(request.form.get("custo", "")) or 0,
+            custo=_decimal_ou_none(request.form.get("custo", "")) or 0,
             multiplicador=_numero(request.form.get("multiplicador", "")) or 0,
         )
 
@@ -232,7 +240,7 @@ def validar_formulario(form):
         return "A categoria é obrigatória."
 
     if custo or mult:
-        valor_custo = _numero(custo)
+        valor_custo = _decimal_ou_none(custo)
         valor_mult = _numero(mult)
 
         if valor_custo is None or valor_custo < 0:
@@ -246,24 +254,20 @@ def validar_formulario(form):
         if not preco:
             return "O preço é obrigatório."
 
-        try:
-            preco = float(preco)
+        valor_preco = _decimal_ou_none(preco)
 
-            if preco < 0:
-                return "O preço não pode ser negativo."
-
-        except ValueError:
+        if valor_preco is None:
             return "Informe um preço válido."
+
+        if valor_preco < 0:
+            return "O preço não pode ser negativo."
 
     if not estoque:
         return "O estoque é obrigatório."
 
     try:
-        estoque = int(estoque)
-
-        if estoque < 0:
+        if int(estoque) < 0:
             return "O estoque não pode ser negativo."
-
     except ValueError:
         return "Informe um estoque válido."
 
@@ -271,6 +275,8 @@ def validar_formulario(form):
         return "A descrição é obrigatória."
 
     return None
+
+
 @app.route("/multiplicadores", methods=["GET", "POST"])
 def multiplicadores_view():
     if request.method == "POST":
@@ -318,8 +324,8 @@ def dashboard():
         "nomes": [p["nome"] for p in itens],
         "estoque": [p["estoque"] for p in itens],
         "custo_nomes": [p["nome"] for p in com_custo],
-        "custos": [p["custo"] for p in com_custo],
-        "precos": [p["preco"] for p in com_custo],
+        "custos": [float(p["custo"]) for p in com_custo],
+        "precos": [float(p["preco"]) for p in com_custo],
         "categorias": list(categorias.keys()),
         "qtd_categorias": list(categorias.values()),
     }
