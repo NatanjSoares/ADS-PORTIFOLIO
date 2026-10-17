@@ -23,6 +23,7 @@ def client_anonimo(produtos, monkeypatch):
     usuarios.inicializar_usuarios()
     modulo_app.app.config["TESTING"] = True
     modulo_app.app.config["WTF_CSRF_ENABLED"] = False
+    modulo_app.limiter.enabled = False
     return modulo_app.app.test_client()
 
 
@@ -40,3 +41,14 @@ def client_com_csrf(client_anonimo):
     modulo_app.app.config["WTF_CSRF_ENABLED"] = True
     yield client_anonimo
     modulo_app.app.config["WTF_CSRF_ENABLED"] = False
+
+
+@pytest.fixture
+def client_com_limite(client_anonimo):
+    import app as modulo_app
+
+    modulo_app.limiter.reset()
+    modulo_app.limiter.enabled = True
+    yield client_anonimo
+    modulo_app.limiter.enabled = False
+    modulo_app.limiter.reset()

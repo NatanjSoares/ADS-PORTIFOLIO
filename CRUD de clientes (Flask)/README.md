@@ -1,5 +1,7 @@
 # ADONAI — Sistema de Gestão de Produtos
 
+![Testes](https://github.com/NatanjSoares/ADS-PORTIFOLIO/actions/workflows/testes-crud.yml/badge.svg)
+
 Aplicação web em Flask para gerenciar o catálogo de uma marca de prata e semijoias. Cadastra, edita, busca e exclui produtos, calcula o preço de venda a partir do custo com **multiplicadores configuráveis**, mostra indicadores e gráficos em um **dashboard** e protege tudo com **login e senha**.
 
 Projeto de portfólio do curso de Análise e Desenvolvimento de Sistemas, com identidade visual própria (verde esmeralda, dourado e marfim).
@@ -15,7 +17,7 @@ Projeto de portfólio do curso de Análise e Desenvolvimento de Sistemas, com id
 - **Dashboard** com indicadores (produtos, itens em estoque, valor do estoque e margem média) e três gráficos (estoque por produto, custo × preço e produtos por categoria)
 - **Login com senha** protegida por hash, sessão com expiração e bloqueio de todas as páginas para quem não entrou
 - **Validação no servidor**, com mensagens de erro e de sucesso
-- **33 testes automatizados** com pytest
+- **50 testes automatizados** com pytest
 - **Docker** com o banco em volume, para os dados persistirem
 
 ## Telas
@@ -147,7 +149,7 @@ pip install pytest
 python -m pytest -v
 ```
 
-São 33 testes, que usam um banco temporário e não alteram os seus dados:
+São 50 testes, que usam um banco temporário e não alteram os seus dados:
 
 - **Banco:** criar, buscar, atualizar, excluir, busca por nome e cálculo do preço pelo multiplicador
 - **Rotas:** abertura das páginas, validação de campos, redirecionamentos e formulário com os multiplicadores
@@ -157,7 +159,7 @@ São 33 testes, que usam um banco temporário e não alteram os seus dados:
 
 **Implementado:** consultas SQL parametrizadas, senhas com hash, `SECRET_KEY` obrigatória, `.env` fora do Git, cookie de sessão `HttpOnly` e `SameSite=Lax`, sessão com expiração de 8 horas, exclusão e logout por POST, validação no servidor e mensagem única para usuário inexistente e senha errada.
 
-**Pendente:** tokens CSRF (Flask-WTF), limite de tentativas de login, níveis de acesso e preço em centavos ou `Decimal`.
+
 
 ## O que aprendi
 
@@ -172,9 +174,7 @@ São 33 testes, que usam um banco temporário e não alteram os seus dados:
 
 ## Próximos passos
 
-- Proteção CSRF com Flask-WTF
-- Preço em centavos ou `Decimal`
-- GitHub Actions rodando o pytest a cada push
+
 - Limite de tentativas de login
 - Deploy com PostgreSQL
 - Reorganização com *app factory* e *blueprints*

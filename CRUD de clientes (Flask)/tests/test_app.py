@@ -256,3 +256,21 @@ def test_todo_formulario_post_tem_token_csrf():
                 sem_token.append(arquivo.name)
 
     assert sem_token == []
+
+def test_login_bloqueia_apos_varias_tentativas(client_com_limite):
+    for _ in range(5):
+        resposta = client_com_limite.post(
+            "/login", data={"usuario": "admin", "senha": "errada"}
+        )
+        assert resposta.status_code == 200
+
+    resposta = client_com_limite.post(
+        "/login", data={"usuario": "admin", "senha": "errada"}
+    )
+    assert resposta.status_code == 429
+    assert "Muitas tentativas" in resposta.get_data(as_text=True)
+
+
+def test_abrir_a_pagina_de_login_nao_conta_no_limite(client_com_limite):
+    for _ in range(10):
+        assert client_com_limite.get("/login").status_code == 200

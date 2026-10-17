@@ -5,11 +5,11 @@ from flask import (
     Flask, render_template, request, redirect, url_for, flash, session
 )
 from flask_wtf.csrf import CSRFError, CSRFProtect
-
 import produtos
 import usuarios
 import dinheiro
-
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 app = Flask(__name__)
 
@@ -31,6 +31,7 @@ csrf = CSRFProtect(app)
 usuarios.inicializar_usuarios()
 
 ROTAS_PUBLICAS = {"login", "static"}
+limiter = Limiter(get_remote_address, app=app, storage_uri="memory://")
 
 @app.errorhandler(CSRFError)
 def csrf_invalido(erro):
@@ -45,9 +46,20 @@ def exigir_login():
     if not session.get("usuario"):
         return redirect(url_for("login"))
 
+def chave_usuario():
+    return "usuario:" + request.form.get("usuario", "").strip().lower()
+
+
+@app.errorhandler(429)
+def muitas_tentativas(erro):
+    flash("Muitas tentativas. Aguarde alguns minutos e tente de novo.", "erro")
+    return render_template("login.html"), 429    
+
 
 
 @app.route("/login", methods=["GET", "POST"])
+@limiter.limit("5 per minute; 30 per hour", methods=["POST"])
+@limiter.limit("10 per hour", methods=["POST"], key_func=chave_usuario)
 def login():
     if session.get("usuario"):
         return redirect(url_for("home"))
