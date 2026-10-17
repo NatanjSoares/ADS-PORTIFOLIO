@@ -1,14 +1,17 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session 
-
-import produtos
 import os
 from datetime import timedelta
 
+from flask import (
+    Flask, render_template, request, redirect, url_for, flash, session
+)
+from flask_wtf.csrf import CSRFError, CSRFProtect
+
+import produtos
 import usuarios
 
 
 app = Flask(__name__)
-app.permanent_session_lifetime = timedelta(hours=1)
+
 app.secret_key = os.environ.get("SECRET_KEY")
 
 if not app.secret_key:
@@ -19,12 +22,20 @@ app.config.update(
     SESSION_COOKIE_SAMESITE="Lax",
     SESSION_COOKIE_SECURE=os.environ.get("COOKIE_SEGURO") == "1",
     PERMANENT_SESSION_LIFETIME=timedelta(hours=8),
+    WTF_CSRF_TIME_LIMIT=None,  # o token vale enquanto a sessão valer
 )
+
+csrf = CSRFProtect(app)
 
 usuarios.inicializar_usuarios()
 
 ROTAS_PUBLICAS = {"login", "static"}
 
+@app.errorhandler(CSRFError)
+def csrf_invalido(erro):
+    app.logger.warning("CSRF recusado em %s: %s", request.path, erro.description)
+    flash("Formulário expirado ou inválido. Tente novamente.", "erro")
+    return redirect(url_for("home"))
 
 @app.before_request
 def exigir_login():

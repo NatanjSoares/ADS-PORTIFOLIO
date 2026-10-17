@@ -22,6 +22,7 @@ def client_anonimo(produtos, monkeypatch):
 
     usuarios.inicializar_usuarios()
     modulo_app.app.config["TESTING"] = True
+    modulo_app.app.config["WTF_CSRF_ENABLED"] = False
     return modulo_app.app.test_client()
 
 
@@ -30,3 +31,12 @@ def client(client_anonimo):
     with client_anonimo.session_transaction() as sessao:
         sessao["usuario"] = "admin"
     return client_anonimo
+
+
+@pytest.fixture
+def client_com_csrf(client_anonimo):
+    import app as modulo_app
+
+    modulo_app.app.config["WTF_CSRF_ENABLED"] = True
+    yield client_anonimo
+    modulo_app.app.config["WTF_CSRF_ENABLED"] = False

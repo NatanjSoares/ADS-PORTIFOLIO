@@ -7,6 +7,7 @@
 
 <div class="topo">
   <form class="busca" method="GET" action="{{ url_for('listar') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="text" name="q" placeholder="Buscar produto..." value="{{ termo }}">
     <button type="submit">Buscar</button>
   </form>
@@ -47,6 +48,7 @@
           <form class="form-inline" method="POST"
                 action="{{ url_for('excluir', produto_id=produto.id) }}"
                 onsubmit="return confirm('Excluir este produto?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="perigo">Excluir</button>
           </form>
         </div>

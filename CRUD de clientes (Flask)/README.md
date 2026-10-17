@@ -15,7 +15,7 @@ Projeto de portfólio do curso de Análise e Desenvolvimento de Sistemas, com id
 - **Dashboard** com indicadores (produtos, itens em estoque, valor do estoque e margem média) e três gráficos (estoque por produto, custo × preço e produtos por categoria)
 - **Login com senha** protegida por hash, sessão com expiração e bloqueio de todas as páginas para quem não entrou
 - **Validação no servidor**, com mensagens de erro e de sucesso
-- **19 testes automatizados** com pytest
+- **33 testes automatizados** com pytest
 - **Docker** com o banco em volume, para os dados persistirem
 
 ## Telas
@@ -147,7 +147,7 @@ pip install pytest
 python -m pytest -v
 ```
 
-São 19 testes, que usam um banco temporário e não alteram os seus dados:
+São 33 testes, que usam um banco temporário e não alteram os seus dados:
 
 - **Banco:** criar, buscar, atualizar, excluir, busca por nome e cálculo do preço pelo multiplicador
 - **Rotas:** abertura das páginas, validação de campos, redirecionamentos e formulário com os multiplicadores

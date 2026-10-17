@@ -17,6 +17,7 @@
     <a href="{{ url_for('dashboard') }}">Dashboard</a>
 
     <form class="form-inline" method="POST" action="{{ url_for('logout') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit">Sair</button>
     </form>
   </nav>

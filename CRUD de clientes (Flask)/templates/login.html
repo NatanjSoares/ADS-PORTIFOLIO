@@ -7,6 +7,7 @@
   <h1>Entrar</h1>
 
   <form method="POST" action="{{ url_for('login') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div>
       <label for="usuario">Usuário:</label>
       <input type="text" id="usuario" name="usuario"
