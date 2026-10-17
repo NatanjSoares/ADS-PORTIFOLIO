@@ -1,0 +1,37 @@
+name: Testes do CRUD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "CRUD de clientes (Flask)/**"
+      - ".github/workflows/testes-crud.yml"
+  pull_request:
+    paths:
+      - "CRUD de clientes (Flask)/**"
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: "CRUD de clientes (Flask)"
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: "CRUD de clientes (Flask)/requirements*.txt"
+
+      - name: Instalar dependências
+        run: pip install -r requirements-dev.txt
+
+      - name: Rodar os testes
+        run: python -m pytest -v
