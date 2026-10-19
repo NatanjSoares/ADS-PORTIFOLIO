@@ -12,7 +12,7 @@ def produtos(tmp_path, monkeypatch):
 
 
 @pytest.fixture
-def client_anonimo(produtos, monkeypatch):
+def client_anonimo(produtos, monkeypatch, tmp_path):  # NOVO: tmp_path
     monkeypatch.setenv("SECRET_KEY", "chave-de-teste")
     monkeypatch.setenv("ADMIN_USER", "admin")
     monkeypatch.setenv("ADMIN_PASSWORD", "senha-de-teste")
@@ -23,6 +23,7 @@ def client_anonimo(produtos, monkeypatch):
     usuarios.inicializar_usuarios()
     modulo_app.app.config["TESTING"] = True
     modulo_app.app.config["WTF_CSRF_ENABLED"] = False
+    modulo_app.app.config["UPLOAD_FOLDER"] = tmp_path / "uploads"  # NOVO
     modulo_app.limiter.enabled = False
     return modulo_app.app.test_client()
 
