@@ -149,7 +149,7 @@ pip install pytest
 python -m pytest -v
 ```
 
-São 50 testes, que usam um banco temporário e não alteram os seus dados:
+São 52 testes, que usam um banco temporário e não alteram os seus dados:
 
 - **Banco:** criar, buscar, atualizar, excluir, busca por nome e cálculo do preço pelo multiplicador
 - **Rotas:** abertura das páginas, validação de campos, redirecionamentos e formulário com os multiplicadores
@@ -175,7 +175,7 @@ São 50 testes, que usam um banco temporário e não alteram os seus dados:
 ## Próximos passos
 
 
-- Limite de tentativas de login
+[]
 - Deploy com PostgreSQL
 - Reorganização com *app factory* e *blueprints*
 
