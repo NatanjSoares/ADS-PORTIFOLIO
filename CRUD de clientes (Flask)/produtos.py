@@ -22,7 +22,8 @@ SQL_TABELA_PRODUTOS = """
         estoque INTEGER NOT NULL,
         descricao TEXT NOT NULL,
         custo_centavos INTEGER NOT NULL DEFAULT 0,
-        multiplicador REAL NOT NULL DEFAULT 0
+        multiplicador REAL NOT NULL DEFAULT 0,
+        foto TEXT
     )
 """
 
@@ -49,6 +50,7 @@ def _produto(linha):
         "estoque": linha["estoque"],
         "descricao": linha["descricao"],
         "multiplicador": linha["multiplicador"],
+        "foto": linha["foto"],
         "preco_centavos": linha["preco_centavos"],
         "custo_centavos": linha["custo_centavos"],
     }
@@ -80,11 +82,18 @@ def _migrar_para_centavos(conexao):
     )
     conexao.execute("DROP TABLE produtos_antiga")
 
+def _adicionar_coluna_foto(conexao):
+    """Bancos antigos ganham a coluna foto, sem perder dados."""
+    colunas = [c["name"] for c in conexao.execute("PRAGMA table_info(produtos)")]
+    if "foto" not in colunas:
+        conexao.execute("ALTER TABLE produtos ADD COLUMN foto TEXT")
+
 
 def inicializar_banco():
     with closing(_conectar()) as conexao, conexao:
         conexao.execute(SQL_TABELA_PRODUTOS)
         _migrar_para_centavos(conexao)
+        _adicionar_coluna_foto(conexao)
 
         conexao.execute(
             """
@@ -162,7 +171,7 @@ def _preco_final(preco, custo, multiplicador):
     return preco_dec, custo_dec
 
 
-def criar(nome, categoria, preco, estoque, descricao, custo=0, multiplicador=0):
+def criar(nome, categoria, preco, estoque, descricao, custo=0, multiplicador=0, foto=None):
     preco_dec, custo_dec = _preco_final(preco, custo, multiplicador)
 
     with closing(_conectar()) as conexao, conexao:
@@ -170,11 +179,11 @@ def criar(nome, categoria, preco, estoque, descricao, custo=0, multiplicador=0):
             """
             INSERT INTO produtos
             (nome, categoria, preco_centavos, estoque, descricao,
-             custo_centavos, multiplicador)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+             custo_centavos, multiplicador, foto)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (nome, categoria, dinheiro.para_centavos(preco_dec), estoque,
-             descricao, dinheiro.para_centavos(custo_dec), multiplicador or 0),
+             descricao, dinheiro.para_centavos(custo_dec), multiplicador or 0, foto),
         )
         novo_id = cursor.lastrowid
 
@@ -201,6 +210,15 @@ def atualizar(produto_id, nome, categoria, preco, estoque, descricao,
     return buscar_por_id(produto_id)
 
 
+def definir_foto(produto_id, foto):
+    """Troca a foto do produto. Use None para remover."""
+    with closing(_conectar()) as conexao, conexao:
+        conexao.execute(
+            "UPDATE produtos SET foto = ? WHERE id = ?",
+            (foto, produto_id),
+        )
+    return buscar_por_id(produto_id)
+    
 def excluir(produto_id):
     with closing(_conectar()) as conexao, conexao:
         cursor = conexao.execute(
