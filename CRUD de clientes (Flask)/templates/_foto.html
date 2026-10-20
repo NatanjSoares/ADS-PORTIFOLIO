@@ -1,0 +1,14 @@
+{% macro foto_produto(produto, tamanho=64, ampliar=False) %}
+  {% if produto and produto.foto %}
+    {% set url = url_for('static', filename='uploads/' ~ produto.foto) %}
+    <img class="foto-produto{% if ampliar %} foto-ampliavel{% endif %}"
+         src="{{ url }}" alt="Foto de {{ produto.nome }}"
+         width="{{ tamanho }}" height="{{ tamanho }}" loading="lazy"
+         {% if ampliar %}data-grande="{{ url }}" tabindex="0"{% endif %}>
+  {% else %}
+    <img class="foto-produto foto-padrao"
+         src="{{ url_for('static', filename='img/sem-foto.svg') }}"
+         alt="Produto sem foto"
+         width="{{ tamanho }}" height="{{ tamanho }}" loading="lazy">
+  {% endif %}
+{% endmacro %}

@@ -449,3 +449,47 @@ def test_excluir_apaga_a_foto_do_disco(client, produtos):
 
     assert produtos.buscar_por_id(produto["id"]) is None
     assert _arquivos_enviados(client) == []        
+
+def test_form_novo_aceita_envio_de_arquivo(client):
+    html = client.get("/novo").get_data(as_text=True)
+
+    assert 'enctype="multipart/form-data"' in html
+    assert 'type="file"' in html
+    assert 'name="foto"' in html
+    assert 'name="remover_foto"' not in html
+
+
+def test_editar_produto_com_foto_mostra_a_imagem_e_o_remover(client, produtos):
+    novo = produtos.criar("Anel", "Joia", 10, 1, "x", foto="abc123.jpg")
+    html = client.get(f"/editar/{novo['id']}").get_data(as_text=True)
+
+    assert "/static/uploads/abc123.jpg" in html
+    assert 'name="remover_foto"' in html
+
+
+def test_editar_produto_sem_foto_nao_mostra_o_remover(client, produtos):
+    novo = produtos.criar("Anel", "Joia", 10, 1, "x")
+    html = client.get(f"/editar/{novo['id']}").get_data(as_text=True)
+
+    assert 'name="remover_foto"' not in html
+    assert "sem-foto.svg" not in html
+
+
+def test_lista_mostra_a_foto_ou_a_imagem_padrao(client, produtos):
+    produtos.criar("Com foto", "Joia", 10, 1, "x", foto="abc123.jpg")
+    html = client.get("/produtos").get_data(as_text=True)
+
+    sem_foto = len(produtos.listar_todos()) - 1  # todos, menos o que tem foto
+
+    assert "/static/uploads/abc123.jpg" in html
+    assert 'alt="Foto de Com foto"' in html
+    assert html.count("sem-foto.svg") == sem_foto
+
+
+def test_nome_com_html_aparece_escapado(client, produtos):
+    produtos.criar("<script>alert(1)</script>", "Joia", 10, 1, "x",
+                   foto="abc123.jpg")
+    html = client.get("/produtos").get_data(as_text=True)
+
+    assert "<script>alert(1)</script>" not in html
+    assert "&lt;script&gt;" in html    

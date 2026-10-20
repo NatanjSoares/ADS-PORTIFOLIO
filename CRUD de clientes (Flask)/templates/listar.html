@@ -1,7 +1,6 @@
 {% extends "base.html" %}
-
+{% from "_foto.html" import foto_produto %}
 {% block titulo %}Produtos{% endblock %}
-
 {% block conteudo %}
 <h1>Produtos</h1>
 
@@ -19,6 +18,7 @@
   <thead>
     <tr>
       <th>ID</th>
+      <th>Foto</th>
       <th>Nome</th>
       <th>Categoria</th>
       <th>Custo</th>
@@ -34,6 +34,7 @@
     {% for produto in produtos %}
     <tr>
       <td>{{ produto.id }}</td>
+      <td>{{ foto_produto(produto, 64, ampliar=True) }}</td>
       <td>{{ produto.nome }}</td>
       <td>{{ produto.categoria }}</td>
       <td>{% if produto.custo %}R$ {{ "%.2f"|format(produto.custo) }}{% else %}—{% endif %}</td>

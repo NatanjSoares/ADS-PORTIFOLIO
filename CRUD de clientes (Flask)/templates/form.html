@@ -1,12 +1,11 @@
 {% extends "base.html" %}
-
+{% from "_foto.html" import foto_produto %}
 {% block titulo %}{{ titulo }}{% endblock %}
-
 {% block conteudo %}
 <a class="botao" href="{{ url_for('listar') }}">Voltar</a>
 <h1>{{ titulo }}</h1>
 
-<form method="POST" action="">
+<form method="POST" action="" enctype="multipart/form-data">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div>
     <label for="nome">Nome:</label>
@@ -56,10 +55,32 @@
     <textarea id="descricao" name="descricao" required>{{ produto.descricao if produto else '' }}</textarea>
   </div>
 
+    <div>
+    <label for="foto">Foto do produto (opcional):</label>
+
+    {% if produto and produto.foto %}
+    <p>
+      {{ foto_produto(produto, 120) }}
+      <label>
+        <input type="checkbox" name="remover_foto" value="1">
+        Remover foto atual
+      </label>
+    </p>
+    {% endif %}
+
+    <input type="file" id="foto" name="foto"
+           accept="image/jpeg,image/png,image/webp">
+    <small>JPG, PNG ou WEBP, até 2 MB.</small>
+    <p id="foto-aviso" role="alert"></p>
+    <img id="foto-previa" alt="Prévia da foto escolhida"
+         width="120" height="120" hidden>
+  </div>
+
   <button type="submit">Salvar</button>
   <a href="{{ url_for('listar') }}">Cancelar</a>
 </form>
 {% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/preco.js') }}"></script>
+<script src="{{ url_for('static', filename='js/foto.js') }}"></script>
 {% endblock %}
