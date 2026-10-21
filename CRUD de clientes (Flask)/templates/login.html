@@ -1,26 +1,31 @@
 {% extends "base.html" %}
-
 {% block titulo %}Entrar{% endblock %}
-
 {% block conteudo %}
-<section class="login-card">
-  <h1>Entrar</h1>
+<section class="login-pagina">
+  <div class="login-imagem" role="img"
+       aria-label="ADONAI Prata e Semijoias"></div>
 
-  <form method="POST" action="{{ url_for('login') }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div>
-      <label for="usuario">Usuário:</label>
-      <input type="text" id="usuario" name="usuario"
-             required autofocus autocomplete="username">
-    </div>
+  <div class="login-card">
+    <p class="login-area">Área administrativa</p>
+    <h1>Entrar</h1>
 
-    <div>
-      <label for="senha">Senha:</label>
-      <input type="password" id="senha" name="senha"
-             required autocomplete="current-password">
-    </div>
+    <form method="POST" action="{{ url_for('login') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-    <button type="submit">Entrar</button>
-  </form>
+      <div>
+        <label for="usuario">Usuário:</label>
+        <input type="text" id="usuario" name="usuario"
+               required autofocus autocomplete="username">
+      </div>
+
+      <div>
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha"
+               required autocomplete="current-password">
+      </div>
+
+      <button type="submit">Entrar</button>
+    </form>
+  </div>
 </section>
 {% endblock %}

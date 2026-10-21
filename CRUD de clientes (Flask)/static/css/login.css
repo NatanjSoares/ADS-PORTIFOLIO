@@ -1,6 +1,59 @@
 @charset "UTF-8";
 @import url("login.css");
+.login-pagina {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);  /* faixa de ponta a ponta, como na home */
+}
+
+.login-imagem {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 75vh;
+  background: url("../img/hero.jpg") center / cover no-repeat;
+}
+
 .login-card {
-  max-width: 420px;
-  margin: 60px auto;
+  /* mais claro que o marfim da imagem, para o cartão se destacar */
+  --cartao: #FFFBF4;
+
+  width: min(420px, calc(100% - 32px));
+  margin: 24px auto;
+  padding: 28px;
+  background: var(--cartao);
+  border: 2px solid var(--dourado);
+  border-top: 5px solid var(--verde);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 56, 47, .25);
+}
+
+.login-card h1 { margin: 0 0 16px; font-size: 2rem; }
+
+.login-area {
+  margin: 0 0 4px;
+  font-size: .75rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--verde-profundo);
+}
+
+/* o cartão já é a caixa: tira a caixa do formulário */
+.login-card form {
+  padding: 0;
+  background: none;
+  border: 0;
+}
+
+.login-card button { width: 100%; }
+
+/* telas largas: o cartão fica sobre o canto vazio da imagem */
+@media (min-width: 900px) {
+  .login-card {
+    position: absolute;
+    top: 50%;
+    right: 8%;
+    transform: translateY(-50%);
+    width: 360px;
+    margin: 0;
+  }
 }

@@ -493,3 +493,64 @@ def test_nome_com_html_aparece_escapado(client, produtos):
 
     assert "<script>alert(1)</script>" not in html
     assert "&lt;script&gt;" in html    
+RAIZ = Path(__file__).parent.parent
+
+
+def test_login_tem_a_hero_e_os_campos(client_anonimo):
+    html = client_anonimo.get("/login").get_data(as_text=True)
+
+    assert "login-imagem" in html
+    assert "Área administrativa" in html
+    assert 'name="usuario"' in html
+    assert 'name="senha"' in html
+    assert 'name="csrf_token"' in html
+
+
+def test_lista_tem_a_janela_de_ampliacao(client):
+    html = client.get("/produtos").get_data(as_text=True)
+
+    assert 'id="foto-dialogo"' in html
+    assert "js/ampliar.js" in html
+
+
+def test_miniatura_com_foto_e_ampliavel(client, produtos):
+    produtos.criar("Anel", "Joia", 10, 1, "x", foto="abc123.jpg")
+    html = client.get("/produtos").get_data(as_text=True)
+
+    assert 'data-grande="/static/uploads/abc123.jpg"' in html
+    assert "foto-ampliavel" in html
+
+
+def test_arquivos_citados_nos_templates_existem():
+    padrao = re.compile(r"""filename\s*=\s*['"]([^'"]+)['"]""")
+    faltando = []
+
+    for template in (RAIZ / "templates").glob("*.html"):
+        texto = template.read_text(encoding="utf-8")
+        for nome in padrao.findall(texto):
+            if nome.endswith("/"):
+                continue  # pasta montada na hora (ex.: uploads/)
+            if not (RAIZ / "static" / nome).exists():
+                faltando.append(f"{template.name}: static/{nome}")
+
+    assert faltando == []
+
+
+def test_arquivos_citados_nos_css_existem():
+    padrao = re.compile(r"""url\(\s*['"]?([^'")]+)['"]?\s*\)""")
+    faltando = []
+
+    for css in (RAIZ / "static" / "css").glob("*.css"):
+        texto = css.read_text(encoding="utf-8")
+        for caminho in padrao.findall(texto):
+            if caminho.startswith(("http", "data:", "#")):
+                continue
+            if not (css.parent / caminho).resolve().exists():
+                faltando.append(f"{css.name}: {caminho}")
+
+    assert faltando == []
+
+
+def test_main_css_importa_o_css_das_fotos():
+    texto = (RAIZ / "static" / "css" / "main.css").read_text(encoding="utf-8")
+    assert "foto.css" in texto    

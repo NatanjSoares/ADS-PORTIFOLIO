@@ -62,4 +62,11 @@
     {% endfor %}
   </tbody>
 </table>
+<dialog id="foto-dialogo" aria-label="Foto ampliada">
+  <img id="foto-grande" alt="">
+  <button type="button" id="foto-fechar" class="dialogo-fechar">Fechar</button>
+</dialog>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/ampliar.js') }}"></script>
 {% endblock %}

@@ -34,3 +34,25 @@ form button {
   margin-bottom: 16px;
 }
 .busca input { flex: 1; }
+/* caixinha "Remover foto atual" e campo de arquivo */
+label:has(> input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+  color: var(--grafite);
+}
+
+input[type="checkbox"] {
+  width: auto;
+  padding: 0;
+  accent-color: var(--verde);
+}
+
+input[type="file"] {
+  padding: 10px;
+  background: var(--marfim-claro);
+  border-style: dashed;
+}
+
+form small { opacity: .8; }

@@ -1,0 +1,75 @@
+/* ---------- miniaturas ---------- */
+.foto-produto {
+  display: block;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--dourado);
+  background: var(--marfim-claro);
+}
+
+.foto-padrao { opacity: .85; }
+
+.foto-ampliavel {
+  cursor: zoom-in;
+  transition: transform .15s;
+}
+
+.foto-ampliavel:hover { transform: scale(1.04); }
+
+.foto-ampliavel:focus-visible {
+  outline: 3px solid var(--dourado);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .foto-ampliavel { transition: none; }
+  .foto-ampliavel:hover { transform: none; }
+}
+
+/* ---------- formulário: prévia e aviso ---------- */
+#foto-previa {
+  display: block;
+  margin-top: 10px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--dourado);
+}
+
+/* sem esta linha, o display:block acima anularia o atributo "hidden" */
+#foto-previa[hidden] { display: none; }
+
+#foto-aviso {
+  min-height: 1.2em;
+  margin: 6px 0 0;
+  color: #7a1f1f;
+  font-weight: 600;
+}
+
+/* ---------- janela de ampliação ---------- */
+#foto-dialogo {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  max-width: 92vw;
+  max-height: 92vh;
+  overflow: visible;
+}
+
+#foto-dialogo::backdrop { background: rgba(33, 42, 45, .75); }
+
+#foto-grande {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 92vw;
+  max-height: 85vh;
+  border-radius: 8px;
+  border: 3px solid var(--dourado);
+  background: var(--marfim-claro);
+}
+
+.dialogo-fechar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
