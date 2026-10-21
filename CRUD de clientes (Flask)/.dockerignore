@@ -3,3 +3,12 @@ __pycache__/
 *.db
 .git
 .venv
+.env
+.vscode/
+.pytest_cache/
+tests/
+docs/
+data/
+backup/
+*.md
+static/uploads/

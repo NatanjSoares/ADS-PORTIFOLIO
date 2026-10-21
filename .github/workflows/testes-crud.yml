@@ -35,3 +35,11 @@ jobs:
 
       - name: Rodar os testes
         run: python -m pytest -v
+  imagem-docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Construir a imagem Docker
+        run: docker build -t crud-produtos "CRUD de clientes (Flask)"      

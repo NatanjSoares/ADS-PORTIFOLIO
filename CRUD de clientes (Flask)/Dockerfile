@@ -1,4 +1,4 @@
-FROM python:3.13-slim  
+FROM python:3.13-slim
 
 WORKDIR /app
 
@@ -7,8 +7,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-ENV DB_PATH=/app/produtos.db
-RUN mkdir /data
+ENV DB_PATH=/data/produtos.db
+RUN mkdir -p /data /app/static/uploads
 
-expose 5000
+EXPOSE 5000
 CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]

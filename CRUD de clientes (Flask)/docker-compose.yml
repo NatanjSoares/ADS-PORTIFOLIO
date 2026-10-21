@@ -4,8 +4,11 @@ services:
     ports:
       - "5001:5000"
     env_file: .env
-    environment:
-      FLASK_DEBUG: "1"
+    restart: unless-stopped
     volumes:
-      - ./data:/data
-      - .:/app
+      - dados:/data
+      - fotos:/app/static/uploads
+
+volumes:
+  dados:
+  fotos:

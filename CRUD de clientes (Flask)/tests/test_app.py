@@ -554,3 +554,11 @@ def test_arquivos_citados_nos_css_existem():
 def test_main_css_importa_o_css_das_fotos():
     texto = (RAIZ / "static" / "css" / "main.css").read_text(encoding="utf-8")
     assert "foto.css" in texto    
+def test_main_css_importa_todos_os_modulos():
+    pasta = RAIZ / "static" / "css"
+    texto = (pasta / "main.css").read_text(encoding="utf-8")
+
+    importados = set(re.findall(r"""@import\s+url\(\s*['"]?([^'")]+)['"]?\s*\)""", texto))
+    modulos = {p.name for p in pasta.glob("*.css")} - {"main.css"}
+
+    assert modulos - importados == set()    
