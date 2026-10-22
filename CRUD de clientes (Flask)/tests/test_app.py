@@ -561,4 +561,85 @@ def test_main_css_importa_todos_os_modulos():
     importados = set(re.findall(r"""@import\s+url\(\s*['"]?([^'")]+)['"]?\s*\)""", texto))
     modulos = {p.name for p in pasta.glob("*.css")} - {"main.css"}
 
-    assert modulos - importados == set()    
+    assert modulos - importados == set()   
+def test_cadastro_com_embalagem_e_frete(client, produtos):
+    from decimal import Decimal
+
+    resposta = client.post("/novo", data=_dados(
+        custo="20", multiplicador="2.5", embalagem="5", frete="12,90",
+    ))
+
+    assert resposta.status_code == 302
+    criado = produtos.buscar_por_nome("Anel")[0]
+    assert criado["preco"] == Decimal("62.50")       # (20 + 5) x 2,5
+    assert criado["embalagem"] == Decimal("5.00")
+    assert criado["frete"] == Decimal("12.90")
+
+
+def test_embalagem_e_frete_sao_opcionais(client, produtos):
+    from decimal import Decimal
+
+    resposta = client.post("/novo", data=_dados())
+
+    assert resposta.status_code == 302
+    criado = produtos.buscar_por_nome("Anel")[0]
+    assert criado["embalagem"] == Decimal("0.00")
+    assert criado["frete"] == Decimal("0.00")
+
+
+def test_embalagem_negativa_e_recusada(client, produtos):
+    resposta = client.post("/novo", data=_dados(embalagem="-1"))
+
+    assert "A embalagem não pode ser negativa" in resposta.get_data(as_text=True)
+    assert produtos.buscar_por_nome("Anel") == []
+
+
+def test_frete_invalido_e_recusado(client, produtos):
+    resposta = client.post("/novo", data=_dados(frete="abc"))
+
+    assert "valor válido para o frete" in resposta.get_data(as_text=True)
+    assert produtos.buscar_por_nome("Anel") == []
+
+
+def test_frete_negativo_e_recusado(client, produtos):
+    resposta = client.post("/novo", data=_dados(frete="-5"))
+
+    assert "O frete não pode ser negativo" in resposta.get_data(as_text=True)
+    assert produtos.buscar_por_nome("Anel") == []
+
+
+def test_editar_salva_embalagem_e_frete(client, produtos):
+    from decimal import Decimal
+
+    produto = produtos.criar("Brinco", "Joia", 0, 1, "x",
+                             custo=20, multiplicador=2.5)
+
+    resposta = client.post(f"/editar/{produto['id']}", data=_dados(
+        nome="Brinco", custo="20", multiplicador="2.5",
+        embalagem="5", frete="8",
+    ))
+
+    assert resposta.status_code == 302
+    atual = produtos.buscar_por_id(produto["id"])
+    assert atual["preco"] == Decimal("62.50")
+    assert atual["frete"] == Decimal("8.00")
+
+
+def test_dashboard_margem_desconta_a_embalagem(client, produtos):
+    # preço = (20 + 5) x 2,5 = 62,50; custo total = 25 -> margem de 60%
+    produtos.criar("Anel", "Joia", 0, 1, "x",
+                   custo=20, multiplicador=2.5, embalagem=5)
+
+    html = client.get("/dashboard").get_data(as_text=True)
+
+    assert "60.0%" in html
+    assert "68.0%" not in html   # seria a margem sem descontar a embalagem
+
+
+def test_grafico_do_dashboard_usa_o_custo_com_embalagem(client, produtos):
+    produtos.criar("Anel", "Joia", 0, 1, "x",
+                   custo=20, multiplicador=2.5, embalagem=5)
+
+    html = client.get("/dashboard").get_data(as_text=True)
+
+    assert '"custos": [25.0]' in html     

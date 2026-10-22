@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
       data: {
         labels: d.custo_nomes,
         datasets: [
-          { label: "Custo", data: d.custos, backgroundColor: douradoEscuro },
+          { label: "Custo + embalagem", data: d.custos, backgroundColor: douradoEscuro },
           { label: "Preço de venda", data: d.precos, backgroundColor: verde },
         ],
       },

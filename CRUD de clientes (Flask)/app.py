@@ -114,10 +114,11 @@ def _decimal_ou_none(texto):
 def preco_do_formulario(form):
     custo = _decimal_ou_none(form.get("custo", ""))
     mult = _numero(form.get("multiplicador", ""))
-    if custo and mult:
-        return produtos.calcular_preco(custo, mult)
-    return _decimal_ou_none(form.get("preco", ""))
+    embalagem = _decimal_ou_none(form.get("embalagem", "")) or 0
 
+    if custo and mult:
+     return produtos.calcular_preco(custo, mult, embalagem)
+    return _decimal_ou_none(form.get("preco", ""))
 
 @app.context_processor
 def injetar_multiplicadores():
@@ -184,6 +185,8 @@ def novo():
                 custo=_decimal_ou_none(request.form.get("custo", "")) or 0,
                 multiplicador=_numero(request.form.get("multiplicador", "")) or 0,
                 foto=nome_foto,
+                embalagem=_decimal_ou_none(request.form.get("embalagem", "")) or 0,
+                frete=_decimal_ou_none(request.form.get("frete", "")) or 0,
             )
         except Exception:
             fotos.remover_foto(nome_foto, pasta)
@@ -244,6 +247,8 @@ def editar(produto_id):
                 descricao=request.form["descricao"].strip(),
                 custo=_decimal_ou_none(request.form.get("custo", "")) or 0,
                 multiplicador=_numero(request.form.get("multiplicador", "")) or 0,
+                embalagem=_decimal_ou_none(request.form.get("embalagem", "")) or 0,
+                frete=_decimal_ou_none(request.form.get("frete", "")) or 0,
             )
 
             if nova_foto:
@@ -321,6 +326,23 @@ def validar_formulario(form):
 
         if valor_preco < 0:
             return "O preço não pode ser negativo."
+    
+    embalagem = form.get("embalagem", "").strip()
+    frete = form.get("frete", "").strip()
+
+    if embalagem:
+        valor_embalagem = _decimal_ou_none(embalagem)
+        if valor_embalagem is None:
+            return "Informe um valor válido para a embalagem."
+        if valor_embalagem < 0:
+            return "A embalagem não pode ser negativa."
+
+    if frete:
+        valor_frete = _decimal_ou_none(frete)
+        if valor_frete is None:
+            return "Informe um valor válido para o frete."
+        if valor_frete < 0:
+            return "O frete não pode ser negativo."
 
     if not estoque:
         return "O estoque é obrigatório."
@@ -376,7 +398,7 @@ def dashboard():
         categorias[p["categoria"]] = categorias.get(p["categoria"], 0) + 1
 
     margens = [
-        (p["preco"] - p["custo"]) / p["preco"] * 100
+        (p["preco"] - p["custo_total"]) / p["preco"] * 100
         for p in com_custo
         if p["preco"]
     ]
@@ -385,7 +407,7 @@ def dashboard():
         "nomes": [p["nome"] for p in itens],
         "estoque": [p["estoque"] for p in itens],
         "custo_nomes": [p["nome"] for p in com_custo],
-        "custos": [float(p["custo"]) for p in com_custo],
+        "custos": [float(p["custo_total"]) for p in com_custo],
         "precos": [float(p["preco"]) for p in com_custo],
         "categorias": list(categorias.keys()),
         "qtd_categorias": list(categorias.values()),
