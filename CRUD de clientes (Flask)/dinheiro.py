@@ -36,6 +36,7 @@ def de_centavos(centavos):
     return (Decimal(int(centavos)) / 100).quantize(CENTAVO)
 
 
-def calcular_preco(custo, multiplicador):
-    resultado = para_decimal(custo) * Decimal(str(multiplicador))
+def calcular_preco(custo, multiplicador, embalagem=0):
+    base = para_decimal(custo) + para_decimal(embalagem or 0)
+    resultado = base * Decimal(str(multiplicador))
     return resultado.quantize(CENTAVO, rounding=ROUND_HALF_UP)

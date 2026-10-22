@@ -23,14 +23,14 @@ SQL_TABELA_PRODUTOS = """
         descricao TEXT NOT NULL,
         custo_centavos INTEGER NOT NULL DEFAULT 0,
         multiplicador REAL NOT NULL DEFAULT 0,
-        foto TEXT
+        foto TEXT,
+        embalagem_centavos INTEGER NOT NULL DEFAULT 0,
+        frete_centavos INTEGER NOT NULL DEFAULT 0
     )
 """
 
-
-def calcular_preco(custo, multiplicador):
-    return dinheiro.calcular_preco(custo, multiplicador)
-
+def calcular_preco(custo, multiplicador, embalagem=0):
+    return dinheiro.calcular_preco(custo, multiplicador, embalagem)
 
 def _conectar():
     conexao = sqlite3.connect(caminho_banco)
@@ -47,15 +47,20 @@ def _produto(linha):
         "categoria": linha["categoria"],
         "preco": dinheiro.de_centavos(linha["preco_centavos"]),
         "custo": dinheiro.de_centavos(linha["custo_centavos"]),
+        "embalagem": dinheiro.de_centavos(linha["embalagem_centavos"]),
+        "frete": dinheiro.de_centavos(linha["frete_centavos"]),
+        "custo_total": dinheiro.de_centavos(
+            linha["custo_centavos"] + linha["embalagem_centavos"]
+        ),
         "estoque": linha["estoque"],
         "descricao": linha["descricao"],
         "multiplicador": linha["multiplicador"],
         "foto": linha["foto"],
         "preco_centavos": linha["preco_centavos"],
         "custo_centavos": linha["custo_centavos"],
+        "embalagem_centavos": linha["embalagem_centavos"],
+        "frete_centavos": linha["frete_centavos"],
     }
-
-
 def _migrar_para_centavos(conexao):
     """Converte a tabela antiga (reais em REAL) para centavos inteiros."""
     colunas = [c["name"] for c in conexao.execute("PRAGMA table_info(produtos)")]
@@ -88,12 +93,24 @@ def _adicionar_coluna_foto(conexao):
     if "foto" not in colunas:
         conexao.execute("ALTER TABLE produtos ADD COLUMN foto TEXT")
 
+def _adicionar_colunas_embalagem_frete(conexao):
+    """Bancos antigos ganham as colunas novas, sem perder dados."""
+    colunas = [c["name"] for c in conexao.execute("PRAGMA table_info(produtos)")]
+    for coluna in ("embalagem_centavos", "frete_centavos"):
+        if coluna not in colunas:
+            conexao.execute(
+                f"ALTER TABLE produtos ADD COLUMN {coluna} "
+                "INTEGER NOT NULL DEFAULT 0"
+            )        
+
 
 def inicializar_banco():
     with closing(_conectar()) as conexao, conexao:
         conexao.execute(SQL_TABELA_PRODUTOS)
         _migrar_para_centavos(conexao)
         _adicionar_coluna_foto(conexao)
+        _adicionar_colunas_embalagem_frete(conexao)
+        
 
         conexao.execute(
             """
@@ -162,28 +179,38 @@ def buscar_por_nome(termo):
         return [_produto(linha) for linha in linhas]
 
 
-def _preco_final(preco, custo, multiplicador):
+def _preco_final(preco, custo, multiplicador, embalagem=0):
     custo_dec = dinheiro.para_decimal(custo)
+    embalagem_dec = dinheiro.para_decimal(embalagem or 0)
+
     if custo_dec and multiplicador:
-        preco_dec = dinheiro.calcular_preco(custo_dec, multiplicador)
+        preco_dec = dinheiro.calcular_preco(custo_dec, multiplicador, embalagem_dec)
     else:
         preco_dec = dinheiro.para_decimal(preco)
-    return preco_dec, custo_dec
+
+    return preco_dec, custo_dec, embalagem_dec
 
 
-def criar(nome, categoria, preco, estoque, descricao, custo=0, multiplicador=0, foto=None):
-    preco_dec, custo_dec = _preco_final(preco, custo, multiplicador)
+def criar(nome, categoria, preco, estoque, descricao, custo=0, multiplicador=0,
+          foto=None, embalagem=0, frete=0):
+    preco_dec, custo_dec, embalagem_dec = _preco_final(
+        preco, custo, multiplicador, embalagem
+    )
+    frete_dec = dinheiro.para_decimal(frete or 0)
 
     with closing(_conectar()) as conexao, conexao:
         cursor = conexao.execute(
             """
             INSERT INTO produtos
             (nome, categoria, preco_centavos, estoque, descricao,
-             custo_centavos, multiplicador, foto)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+             custo_centavos, multiplicador, foto,
+             embalagem_centavos, frete_centavos)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (nome, categoria, dinheiro.para_centavos(preco_dec), estoque,
-             descricao, dinheiro.para_centavos(custo_dec), multiplicador or 0, foto),
+             descricao, dinheiro.para_centavos(custo_dec), multiplicador or 0,
+             foto, dinheiro.para_centavos(embalagem_dec),
+             dinheiro.para_centavos(frete_dec)),
         )
         novo_id = cursor.lastrowid
 
@@ -191,20 +218,25 @@ def criar(nome, categoria, preco, estoque, descricao, custo=0, multiplicador=0, 
 
 
 def atualizar(produto_id, nome, categoria, preco, estoque, descricao,
-              custo=0, multiplicador=0):
-    preco_dec, custo_dec = _preco_final(preco, custo, multiplicador)
+              custo=0, multiplicador=0, embalagem=0, frete=0):
+    preco_dec, custo_dec, embalagem_dec = _preco_final(
+        preco, custo, multiplicador, embalagem
+    )
+    frete_dec = dinheiro.para_decimal(frete or 0)
 
     with closing(_conectar()) as conexao, conexao:
         conexao.execute(
             """
             UPDATE produtos
             SET nome = ?, categoria = ?, preco_centavos = ?, estoque = ?,
-                descricao = ?, custo_centavos = ?, multiplicador = ?
+                descricao = ?, custo_centavos = ?, multiplicador = ?,
+                embalagem_centavos = ?, frete_centavos = ?
             WHERE id = ?
             """,
             (nome, categoria, dinheiro.para_centavos(preco_dec), estoque,
              descricao, dinheiro.para_centavos(custo_dec), multiplicador or 0,
-             produto_id),
+             dinheiro.para_centavos(embalagem_dec),
+             dinheiro.para_centavos(frete_dec), produto_id),
         )
 
     return buscar_por_id(produto_id)

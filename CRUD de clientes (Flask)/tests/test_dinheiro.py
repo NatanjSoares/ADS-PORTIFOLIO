@@ -80,3 +80,21 @@ def test_migracao_converte_reais_em_centavos(tmp_path, monkeypatch):
     assert anel["preco_centavos"] == 1990
     assert anel["custo_centavos"] == 800
     assert anel["estoque"] == 2
+
+def test_embalagem_entra_no_custo_antes_do_multiplicador():
+    # (20 + 5) x 2,5 = 62,50
+    assert dinheiro.calcular_preco("20", 2.5, embalagem="5") == Decimal("62.50")
+
+
+def test_sem_embalagem_o_calculo_continua_igual():
+    assert dinheiro.calcular_preco("20", 2.5) == Decimal("50.00")
+    assert dinheiro.calcular_preco("20", 2.5, embalagem=0) == Decimal("50.00")
+
+
+def test_embalagem_aceita_virgula():
+    assert dinheiro.calcular_preco("10", 2, embalagem="1,50") == Decimal("23.00")
+
+
+def test_embalagem_invalida_e_recusada():
+    with pytest.raises(ValueError):
+        dinheiro.calcular_preco("20", 2.5, embalagem="abc")    
