@@ -643,3 +643,47 @@ def test_grafico_do_dashboard_usa_o_custo_com_embalagem(client, produtos):
     html = client.get("/dashboard").get_data(as_text=True)
 
     assert '"custos": [25.0]' in html     
+
+def test_formulario_tem_embalagem_e_frete(client):
+    html = client.get("/novo").get_data(as_text=True)
+
+    assert 'id="embalagem"' in html
+    assert 'name="embalagem"' in html
+    assert 'id="frete"' in html
+    assert 'name="frete"' in html
+
+
+def test_campos_do_formulario_na_ordem_combinada(client):
+    html = client.get("/novo").get_data(as_text=True)
+
+    ordem = ['id="custo"', 'id="embalagem"', 'id="frete"',
+             'id="multiplicador"', 'id="preco"']
+    posicoes = [html.index(item) for item in ordem]
+
+    assert posicoes == sorted(posicoes)
+
+
+def test_editar_mostra_embalagem_e_frete_salvos(client, produtos):
+    produto = produtos.criar("Anel", "Joia", 0, 1, "x",
+                             custo=20, multiplicador=2.5,
+                             embalagem=5, frete=12.9)
+
+    html = client.get(f"/editar/{produto['id']}").get_data(as_text=True)
+
+    assert 'value="5.00"' in html
+    assert 'value="12.90"' in html
+
+
+def test_formulario_com_erro_mantem_embalagem_e_frete_digitados(client):
+    resposta = client.post("/novo", data=_dados(
+        nome="", embalagem="3.5", frete="9",
+    ))
+
+    html = resposta.get_data(as_text=True)
+    assert 'value="3.5"' in html
+    assert 'value="9"' in html
+
+
+def test_preco_js_soma_a_embalagem():
+    texto = (RAIZ / "static" / "js" / "preco.js").read_text(encoding="utf-8")
+    assert "embalagem" in texto

@@ -24,7 +24,21 @@
     <input type="number" id="custo" name="custo" step="0.01" min="0"
            value="{{ produto.custo if produto and produto.custo else '' }}">
   </div>
+  
+  <div>
+    <label for="embalagem">Embalagem (R$):</label>
+    <input type="number" id="embalagem" name="embalagem" step="0.01" min="0"
+           value="{{ produto.embalagem if produto and produto.embalagem else '' }}">
+    <small>Custo da embalagem por unidade. Entra no cálculo do preço.</small>
+  </div>
 
+  <div>
+    <label for="frete">Frete (R$):</label>
+    <input type="number" id="frete" name="frete" step="0.01" min="0"
+           value="{{ produto.frete if produto and produto.frete else '' }}">
+    <small>Valor do frete. Não entra no preço de venda.</small>
+  </div>
+  
   <div>
     <label for="multiplicador">Multiplicador:</label>
    <select id="multiplicador" name="multiplicador">
