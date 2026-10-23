@@ -2,9 +2,7 @@ from decimal import Decimal
 
 import pytest
 
-import dinheiro
-
-
+from adonai.regras import dinheiro
 def test_aceita_virgula_e_ponto():
     assert dinheiro.para_decimal("19,90") == Decimal("19.90")
     assert dinheiro.para_decimal("19.90") == Decimal("19.90")

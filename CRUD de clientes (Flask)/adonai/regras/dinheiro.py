@@ -2,6 +2,7 @@ from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 
 CENTAVO = Decimal("0.01")
 LIMITE = Decimal("9999999.99")
+MULT_MIN, MULT_MAX = 1.5, 4.0
 
 
 def para_decimal(valor):

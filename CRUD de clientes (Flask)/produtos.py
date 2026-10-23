@@ -3,15 +3,13 @@ import sqlite3
 from contextlib import closing
 from pathlib import Path
 
-import dinheiro
-
-
+from adonai.regras import dinheiro
 caminho_banco = Path(
     os.environ.get("DB_PATH", Path(__file__).parent / "produtos.db")
 )
 caminho_banco.parent.mkdir(parents=True, exist_ok=True)
 
-MULT_MIN, MULT_MAX = 1.5, 4.0
+MULT_MIN, MULT_MAX = dinheiro.MULT_MIN, dinheiro.MULT_MAX
 
 SQL_TABELA_PRODUTOS = """
     CREATE TABLE IF NOT EXISTS produtos (

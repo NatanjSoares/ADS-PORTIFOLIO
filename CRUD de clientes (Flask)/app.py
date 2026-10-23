@@ -7,15 +7,14 @@ from flask import (
 from flask_wtf.csrf import CSRFError, CSRFProtect
 import produtos
 import usuarios
-import dinheiro
+from adonai.regras import dinheiro
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from pathlib import Path
 
 from werkzeug.exceptions import RequestEntityTooLarge
 
-import fotos
-
+from adonai.regras import fotos
 app = Flask(__name__)
 
 app.secret_key = os.environ.get("SECRET_KEY")
