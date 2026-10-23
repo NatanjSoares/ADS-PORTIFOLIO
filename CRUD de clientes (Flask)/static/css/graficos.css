@@ -21,3 +21,13 @@
 
 .graficos .card { text-align: left; }
 .graficos canvas { max-height: 320px; }
+.grafico-caixa {
+  position: relative;
+  height: 300px;
+}
+
+.graficos .grafico-caixa canvas {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none;
+}

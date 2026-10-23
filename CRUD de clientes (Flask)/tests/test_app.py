@@ -687,3 +687,43 @@ def test_formulario_com_erro_mantem_embalagem_e_frete_digitados(client):
 def test_preco_js_soma_a_embalagem():
     texto = (RAIZ / "static" / "js" / "preco.js").read_text(encoding="utf-8")
     assert "embalagem" in texto
+def test_texto_dos_multiplicadores_cita_a_embalagem(client):
+    html = client.get("/multiplicadores").get_data(as_text=True)
+
+    assert "(custo + embalagem) × multiplicador" in html
+
+
+def test_lista_mostra_o_custo_com_embalagem(client, produtos):
+    produtos.criar("Anel", "Joia", 0, 1, "x",
+                   custo=20, multiplicador=2.5, embalagem=5)
+
+    html = client.get("/produtos").get_data(as_text=True)
+
+    assert "R$ 25.00" in html
+    assert 'title="Custo R$ 20.00 + embalagem R$ 5.00"' in html
+
+
+def test_celulas_de_valor_nao_quebram_linha(client):
+    html = client.get("/produtos").get_data(as_text=True)
+
+    assert 'class="valor"' in html
+
+
+def test_dashboard_tem_uma_caixa_para_cada_grafico(client):
+    html = client.get("/dashboard").get_data(as_text=True)
+
+    assert html.count('class="grafico-caixa"') == 3
+
+
+def test_css_dos_ajustes_visuais():
+    css = RAIZ / "static" / "css"
+
+    assert "a.botao" in (css / "components.css").read_text(encoding="utf-8")
+    assert "white-space: nowrap" in (css / "tabela.css").read_text(encoding="utf-8")
+    assert ".grafico-caixa" in (css / "graficos.css").read_text(encoding="utf-8")
+
+
+def test_dashboard_js_nao_prende_a_proporcao_dos_graficos():
+    js = (RAIZ / "static" / "js" / "dashboard.js").read_text(encoding="utf-8")
+
+    assert "maintainAspectRatio" in js    

@@ -3,8 +3,7 @@
 
 {% block conteudo %}
 <h1>Multiplicadores de preço</h1>
-<p>Preço de venda = custo × multiplicador (de 1,5 a 4).</p>
-
+<p>Preço de venda = (custo + embalagem) × multiplicador (de 1,5 a 4).</p>
 <table>
   <tr><th>Nome</th><th>Valor</th><th>Ações</th></tr>
   {% for m in multiplicadores %}

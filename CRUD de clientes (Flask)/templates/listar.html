@@ -21,7 +21,7 @@
       <th>Foto</th>
       <th>Nome</th>
       <th>Categoria</th>
-      <th>Custo</th>
+      <th>Custo + emb.</th>
       <th>Mult.</th>
       <th>Preço</th>
       <th>Estoque</th>
@@ -37,9 +37,11 @@
       <td>{{ foto_produto(produto, 64, ampliar=True) }}</td>
       <td>{{ produto.nome }}</td>
       <td>{{ produto.categoria }}</td>
-      <td>{% if produto.custo %}R$ {{ "%.2f"|format(produto.custo) }}{% else %}—{% endif %}</td>
+      <td class="valor"{% if produto.custo_total %} title="Custo R$ {{ '%.2f'|format(produto.custo) }} + embalagem R$ {{ '%.2f'|format(produto.embalagem) }}"{% endif %}>
+        {% if produto.custo_total %}R$ {{ "%.2f"|format(produto.custo_total) }}{% else %}—{% endif %}
+      </td>
       <td>{% if produto.multiplicador %}×{{ produto.multiplicador }}{% else %}—{% endif %}</td>
-      <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
+      <td class="valor">R$ {{ "%.2f"|format(produto.preco) }}</td>
       <td>{{ produto.estoque }}</td>
       <td>{{ produto.descricao }}</td>
       <td>

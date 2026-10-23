@@ -10,7 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const paleta = [verde, dourado, douradoEscuro, "#143427", "#F3E0C7", "#212A2D"];
 
   Chart.defaults.font.family = "Montserrat, system-ui, sans-serif";
-  Chart.defaults.color = "#212A2D";
+  
+    Chart.defaults.maintainAspectRatio = false;
 
   const reais = (v) => "R$ " + Number(v).toFixed(2);
 
