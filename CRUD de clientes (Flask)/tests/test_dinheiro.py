@@ -96,3 +96,5 @@ def test_embalagem_aceita_virgula():
 def test_embalagem_invalida_e_recusada():
     with pytest.raises(ValueError):
         dinheiro.calcular_preco("20", 2.5, embalagem="abc")    
+def test_faixa_do_multiplicador():
+    assert (dinheiro.MULT_MIN, dinheiro.MULT_MAX) == (1.5, 4.0)        

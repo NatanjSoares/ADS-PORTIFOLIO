@@ -15,6 +15,13 @@ from pathlib import Path
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from adonai.regras import fotos
+from adonai.regras.estatisticas import calcular_painel
+from adonai.regras.validacao import (
+    decimal_ou_none,
+    numero_ou_none,
+    preco_do_formulario,
+    validar_formulario,
+)
 app = Flask(__name__)
 
 app.secret_key = os.environ.get("SECRET_KEY")
@@ -96,28 +103,10 @@ def logout():
     flash("Você saiu do sistema.", "sucesso")
     return redirect(url_for("login"))
 
-def _numero(texto):
-    try:
-        return float(texto)
-    except (TypeError, ValueError):
-        return None
 
 
-def _decimal_ou_none(texto):
-    try:
-        return dinheiro.para_decimal(texto)
-    except ValueError:
-        return None
 
 
-def preco_do_formulario(form):
-    custo = _decimal_ou_none(form.get("custo", ""))
-    mult = _numero(form.get("multiplicador", ""))
-    embalagem = _decimal_ou_none(form.get("embalagem", "")) or 0
-
-    if custo and mult:
-     return produtos.calcular_preco(custo, mult, embalagem)
-    return _decimal_ou_none(form.get("preco", ""))
 
 @app.context_processor
 def injetar_multiplicadores():
@@ -181,11 +170,11 @@ def novo():
                 preco=preco_do_formulario(request.form),
                 estoque=int(request.form["estoque"]),
                 descricao=request.form["descricao"].strip(),
-                custo=_decimal_ou_none(request.form.get("custo", "")) or 0,
-                multiplicador=_numero(request.form.get("multiplicador", "")) or 0,
+                custo=decimal_ou_none(request.form.get("custo", "")) or 0,
+                multiplicador=numero_ou_none(request.form.get("multiplicador", "")) or 0,
                 foto=nome_foto,
-                embalagem=_decimal_ou_none(request.form.get("embalagem", "")) or 0,
-                frete=_decimal_ou_none(request.form.get("frete", "")) or 0,
+                embalagem=decimal_ou_none(request.form.get("embalagem", "")) or 0,
+                frete=decimal_ou_none(request.form.get("frete", "")) or 0,
             )
         except Exception:
             fotos.remover_foto(nome_foto, pasta)
@@ -244,10 +233,10 @@ def editar(produto_id):
                 preco=preco_do_formulario(request.form),
                 estoque=int(request.form["estoque"]),
                 descricao=request.form["descricao"].strip(),
-                custo=_decimal_ou_none(request.form.get("custo", "")) or 0,
-                multiplicador=_numero(request.form.get("multiplicador", "")) or 0,
-                embalagem=_decimal_ou_none(request.form.get("embalagem", "")) or 0,
-                frete=_decimal_ou_none(request.form.get("frete", "")) or 0,
+                custo=decimal_ou_none(request.form.get("custo", "")) or 0,
+                multiplicador=numero_ou_none(request.form.get("multiplicador", "")) or 0,
+                embalagem=decimal_ou_none(request.form.get("embalagem", "")) or 0,
+                frete=decimal_ou_none(request.form.get("frete", "")) or 0,
             )
 
             if nova_foto:
@@ -286,76 +275,6 @@ def excluir(produto_id):
         flash("Produto não encontrado.", "erro")
 
     return redirect(url_for("listar"))
-def validar_formulario(form):
-    """Validação simples dos dados do produto."""
-
-    nome = form.get("nome", "").strip()
-    categoria = form.get("categoria", "").strip()
-    preco = form.get("preco", "").strip()
-    estoque = form.get("estoque", "").strip()
-    descricao = form.get("descricao", "").strip()
-    custo = form.get("custo", "").strip()
-    mult = form.get("multiplicador", "").strip()
-
-    if not nome:
-        return "O nome do produto é obrigatório."
-
-    if not categoria:
-        return "A categoria é obrigatória."
-
-    if custo or mult:
-        valor_custo = _decimal_ou_none(custo)
-        valor_mult = _numero(mult)
-
-        if valor_custo is None or valor_custo < 0:
-            return "Informe um custo válido."
-
-        if valor_mult is None or not (
-            produtos.MULT_MIN <= valor_mult <= produtos.MULT_MAX
-        ):
-            return "O multiplicador deve estar entre 1,5 e 4."
-    else:
-        if not preco:
-            return "O preço é obrigatório."
-
-        valor_preco = _decimal_ou_none(preco)
-
-        if valor_preco is None:
-            return "Informe um preço válido."
-
-        if valor_preco < 0:
-            return "O preço não pode ser negativo."
-    
-    embalagem = form.get("embalagem", "").strip()
-    frete = form.get("frete", "").strip()
-
-    if embalagem:
-        valor_embalagem = _decimal_ou_none(embalagem)
-        if valor_embalagem is None:
-            return "Informe um valor válido para a embalagem."
-        if valor_embalagem < 0:
-            return "A embalagem não pode ser negativa."
-
-    if frete:
-        valor_frete = _decimal_ou_none(frete)
-        if valor_frete is None:
-            return "Informe um valor válido para o frete."
-        if valor_frete < 0:
-            return "O frete não pode ser negativo."
-
-    if not estoque:
-        return "O estoque é obrigatório."
-
-    try:
-        if int(estoque) < 0:
-            return "O estoque não pode ser negativo."
-    except ValueError:
-        return "Informe um estoque válido."
-
-    if not descricao:
-        return "A descrição é obrigatória."
-
-    return None
 
 
 
@@ -363,7 +282,7 @@ def validar_formulario(form):
 def multiplicadores_view():
     if request.method == "POST":
         nome = request.form.get("nome", "").strip()
-        valor = _numero(request.form.get("valor", ""))
+        valor = numero_ou_none(request.form.get("valor", ""))
         mult_id = request.form.get("id")
 
         if not nome:
@@ -389,36 +308,7 @@ def excluir_multiplicador(mult_id):
 
 @app.route("/dashboard")
 def dashboard():
-    itens = produtos.listar_todos()
-    com_custo = [p for p in itens if p["custo"]]
-
-    categorias = {}
-    for p in itens:
-        categorias[p["categoria"]] = categorias.get(p["categoria"], 0) + 1
-
-    margens = [
-        (p["preco"] - p["custo_total"]) / p["preco"] * 100
-        for p in com_custo
-        if p["preco"]
-    ]
-
-    dados = {
-        "nomes": [p["nome"] for p in itens],
-        "estoque": [p["estoque"] for p in itens],
-        "custo_nomes": [p["nome"] for p in com_custo],
-        "custos": [float(p["custo_total"]) for p in com_custo],
-        "precos": [float(p["preco"]) for p in com_custo],
-        "categorias": list(categorias.keys()),
-        "qtd_categorias": list(categorias.values()),
-    }
-
-    resumo = {
-        "total_produtos": len(itens),
-        "itens_estoque": sum(p["estoque"] for p in itens),
-        "valor_estoque": sum(p["preco"] * p["estoque"] for p in itens),
-        "margem_media": sum(margens) / len(margens) if margens else None,
-    }
-
+    dados, resumo = calcular_painel(produtos.listar_todos())
     return render_template("dashboard.html", dados=dados, resumo=resumo)
 
 if __name__ == "__main__":
