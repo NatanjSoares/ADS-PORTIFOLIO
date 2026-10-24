@@ -22,57 +22,22 @@ from adonai.regras.validacao import (
     preco_do_formulario,
     validar_formulario,
 )
+from adonai.config import carregar_config
+from adonai.extensoes import csrf, limiter
+from adonai.seguranca import registrar as registrar_seguranca
 app = Flask(__name__)
 
-app.secret_key = os.environ.get("SECRET_KEY")
+app.config.from_mapping(carregar_config())
+csrf.init_app(app)
+limiter.init_app(app)
+registrar_seguranca(app)
 
-if not app.secret_key:
-    raise RuntimeError("Defina a variável de ambiente SECRET_KEY.")
-
-app.config.update(
-    SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=os.environ.get("COOKIE_SEGURO") == "1",
-    PERMANENT_SESSION_LIFETIME=timedelta(hours=8),
-    WTF_CSRF_TIME_LIMIT=None,  # o token vale enquanto a sessão valer
-)
-app.config["UPLOAD_FOLDER"] = Path(
-    os.environ.get("UPLOAD_DIR", Path(__file__).parent / "static" / "uploads")
-)
-app.config["MAX_CONTENT_LENGTH"] = 3 * 1024 * 1024  # limite geral: 3 MB
-
-csrf = CSRFProtect(app)
 
 usuarios.inicializar_usuarios()
 
-ROTAS_PUBLICAS = {"login", "static"}
-limiter = Limiter(get_remote_address, app=app, storage_uri="memory://")
-
-@app.errorhandler(CSRFError)
-def csrf_invalido(erro):
-    app.logger.warning("CSRF recusado em %s: %s", request.path, erro.description)
-    flash("Formulário expirado ou inválido. Tente novamente.", "erro")
-    return redirect(url_for("home"))
-
-@app.before_request
-def exigir_login():
-    if request.endpoint in ROTAS_PUBLICAS:
-        return None
-    if not session.get("usuario"):
-        return redirect(url_for("login"))
 
 def chave_usuario():
     return "usuario:" + request.form.get("usuario", "").strip().lower()
-
-
-@app.errorhandler(429)
-def muitas_tentativas(erro):
-    flash("Muitas tentativas. Aguarde alguns minutos e tente de novo.", "erro")
-    return render_template("login.html"), 429    
-@app.errorhandler(RequestEntityTooLarge)
-def arquivo_grande_demais(erro):
-    flash("A foto deve ter no máximo 2 MB.", "erro")
-    return redirect(request.path)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -102,10 +67,6 @@ def logout():
     session.clear()
     flash("Você saiu do sistema.", "sucesso")
     return redirect(url_for("login"))
-
-
-
-
 
 
 @app.context_processor
@@ -275,7 +236,6 @@ def excluir(produto_id):
         flash("Produto não encontrado.", "erro")
 
     return redirect(url_for("listar"))
-
 
 
 @app.route("/multiplicadores", methods=["GET", "POST"])
