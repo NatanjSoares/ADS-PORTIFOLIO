@@ -7,6 +7,11 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 
 
+def caminho_do_banco():
+    """Arquivo do banco: DB_PATH, ou produtos.db na raiz do projeto."""
+    return Path(os.environ.get("DB_PATH", RAIZ / "produtos.db"))
+
+
 def carregar_config():
     chave = os.environ.get("SECRET_KEY")
     if not chave:
@@ -23,4 +28,5 @@ def carregar_config():
             os.environ.get("UPLOAD_DIR", RAIZ / "static" / "uploads")
         ),
         "MAX_CONTENT_LENGTH": 3 * 1024 * 1024,  # limite geral: 3 MB
+        "DB_PATH": caminho_do_banco(),
     }

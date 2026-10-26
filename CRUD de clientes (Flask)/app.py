@@ -5,8 +5,7 @@ from flask import (
     Flask, render_template, request, redirect, url_for, flash, session
 )
 from flask_wtf.csrf import CSRFError, CSRFProtect
-import produtos
-import usuarios
+from adonai.dados import banco, multiplicadores, produtos, usuarios
 from adonai.regras import dinheiro
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -33,8 +32,9 @@ limiter.init_app(app)
 registrar_seguranca(app)
 
 
-usuarios.inicializar_usuarios()
-
+with app.app_context():
+    banco.inicializar_banco()
+    usuarios.inicializar_usuarios()
 
 def chave_usuario():
     return "usuario:" + request.form.get("usuario", "").strip().lower()
@@ -69,9 +69,10 @@ def logout():
     return redirect(url_for("login"))
 
 
+
 @app.context_processor
 def injetar_multiplicadores():
-    return {"multiplicadores": produtos.listar_multiplicadores()}
+    return {"multiplicadores": multiplicadores.listar_multiplicadores()}
 
 
 @app.route("/")
@@ -247,13 +248,13 @@ def multiplicadores_view():
 
         if not nome:
             flash("O nome do multiplicador é obrigatório.", "erro")
-        elif valor is None or not (produtos.MULT_MIN <= valor <= produtos.MULT_MAX):
+        elif valor is None or not (dinheiro.MULT_MIN <= valor <= dinheiro.MULT_MAX):
             flash("O valor deve estar entre 1,5 e 4.", "erro")
         else:
             if mult_id:
-                produtos.atualizar_multiplicador(int(mult_id), nome, valor)
+                multiplicadores.atualizar_multiplicador(int(mult_id), nome, valor)
             else:
-                produtos.criar_multiplicador(nome, valor)
+                multiplicadores.criar_multiplicador(nome, valor)
             flash("Multiplicador salvo.", "sucesso")
         return redirect(url_for("multiplicadores_view"))
 
@@ -262,7 +263,7 @@ def multiplicadores_view():
 
 @app.route("/multiplicadores/<int:mult_id>/excluir", methods=["POST"])
 def excluir_multiplicador(mult_id):
-    produtos.excluir_multiplicador(mult_id)
+    multiplicadores.excluir_multiplicador(mult_id)
     flash("Multiplicador excluído.", "sucesso")
     return redirect(url_for("multiplicadores_view"))
 

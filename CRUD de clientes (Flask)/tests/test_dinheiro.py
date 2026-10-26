@@ -3,6 +3,8 @@ from decimal import Decimal
 import pytest
 
 from adonai.regras import dinheiro
+
+
 def test_aceita_virgula_e_ponto():
     assert dinheiro.para_decimal("19,90") == Decimal("19.90")
     assert dinheiro.para_decimal("19.90") == Decimal("19.90")
@@ -36,6 +38,7 @@ def test_valores_invalidos_sao_recusados(invalido):
     with pytest.raises(ValueError):
         dinheiro.para_decimal(invalido)
 
+
 def test_preco_guardado_em_centavos(produtos):
     from decimal import Decimal
 
@@ -44,8 +47,7 @@ def test_preco_guardado_em_centavos(produtos):
     assert novo["preco"] == Decimal("19.99")
 
 
-def test_migracao_converte_reais_em_centavos(tmp_path, monkeypatch):
-    import importlib
+def test_migracao_converte_reais_em_centavos(tmp_path, abrir_banco):
     import sqlite3
 
     caminho = tmp_path / "antigo.db"
@@ -69,15 +71,13 @@ def test_migracao_converte_reais_em_centavos(tmp_path, monkeypatch):
     con.commit()
     con.close()
 
-    monkeypatch.setenv("DB_PATH", str(caminho))
-    import produtos
+    with abrir_banco(caminho) as produtos:
+        anel = produtos.buscar_por_nome("Anel")[0]
 
-    importlib.reload(produtos)
-
-    anel = produtos.buscar_por_nome("Anel")[0]
     assert anel["preco_centavos"] == 1990
     assert anel["custo_centavos"] == 800
     assert anel["estoque"] == 2
+
 
 def test_embalagem_entra_no_custo_antes_do_multiplicador():
     # (20 + 5) x 2,5 = 62,50
@@ -95,6 +95,8 @@ def test_embalagem_aceita_virgula():
 
 def test_embalagem_invalida_e_recusada():
     with pytest.raises(ValueError):
-        dinheiro.calcular_preco("20", 2.5, embalagem="abc")    
+        dinheiro.calcular_preco("20", 2.5, embalagem="abc")
+
+
 def test_faixa_do_multiplicador():
-    assert (dinheiro.MULT_MIN, dinheiro.MULT_MAX) == (1.5, 4.0)        
+    assert (dinheiro.MULT_MIN, dinheiro.MULT_MAX) == (1.5, 4.0)

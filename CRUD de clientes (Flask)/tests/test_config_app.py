@@ -2,7 +2,7 @@ from datetime import timedelta
 
 import pytest
 
-from adonai.config import RAIZ, carregar_config
+from adonai.config import RAIZ, caminho_do_banco, carregar_config
 from adonai.seguranca import ROTAS_PUBLICAS
 
 
@@ -65,3 +65,17 @@ def test_extensoes_estao_ligadas_ao_app(client):
 
 def test_so_o_login_e_os_arquivos_estaticos_sao_publicos():
     assert ROTAS_PUBLICAS == {"login", "static"}
+
+
+def test_banco_padrao_fica_na_raiz_do_projeto(monkeypatch):
+    monkeypatch.delenv("DB_PATH", raising=False)
+
+    assert caminho_do_banco() == RAIZ / "produtos.db"
+
+
+def test_caminho_do_banco_pode_ser_trocado_pela_variavel(monkeypatch, tmp_path):
+    monkeypatch.setenv("SECRET_KEY", "chave")
+    monkeypatch.setenv("DB_PATH", str(tmp_path / "outro.db"))
+
+    assert caminho_do_banco() == tmp_path / "outro.db"
+    assert carregar_config()["DB_PATH"] == tmp_path / "outro.db"

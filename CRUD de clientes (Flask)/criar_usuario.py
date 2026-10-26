@@ -1,29 +1,35 @@
 import getpass
 from contextlib import closing
 
+from flask import Flask
 from werkzeug.security import generate_password_hash
 
-import produtos
-import usuarios
+from adonai.config import caminho_do_banco
+from adonai.dados import banco, usuarios
 
-usuarios.inicializar_usuarios()  # garante que a tabela existe
+app = Flask(__name__)
+app.config["DB_PATH"] = caminho_do_banco()
 
-usuario = input("Usuário: ").strip()
-senha = getpass.getpass("Senha: ")
-confirmacao = getpass.getpass("Repita a senha: ")
+with app.app_context():
+    banco.inicializar_banco()
+    usuarios.inicializar_usuarios()  # garante que a tabela existe
 
-if not usuario or not senha:
-    raise SystemExit("Usuário e senha são obrigatórios.")
-if senha != confirmacao:
-    raise SystemExit("As senhas não conferem.")
+    usuario = input("Usuário: ").strip()
+    senha = getpass.getpass("Senha: ")
+    confirmacao = getpass.getpass("Repita a senha: ")
 
-with closing(produtos._conectar()) as conexao, conexao:
-    conexao.execute(
-        """
-        INSERT INTO usuarios (usuario, senha_hash) VALUES (?, ?)
-        ON CONFLICT(usuario) DO UPDATE SET senha_hash = excluded.senha_hash
-        """,
-        (usuario, generate_password_hash(senha)),
-    )
+    if not usuario or not senha:
+        raise SystemExit("Usuário e senha são obrigatórios.")
+    if senha != confirmacao:
+        raise SystemExit("As senhas não conferem.")
 
-print("Usuário salvo.")
+    with closing(banco.conectar()) as conexao, conexao:
+        conexao.execute(
+            """
+            INSERT INTO usuarios (usuario, senha_hash) VALUES (?, ?)
+            ON CONFLICT(usuario) DO UPDATE SET senha_hash = excluded.senha_hash
+            """,
+            (usuario, generate_password_hash(senha)),
+        )
+
+    print("Usuário salvo.")

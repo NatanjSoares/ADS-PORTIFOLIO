@@ -28,9 +28,11 @@ def test_excluir(produtos):
     assert produtos.buscar_por_id(novo["id"]) is None
     assert produtos.excluir(novo["id"]) is False
 
+
 def test_preco_calculado_pelo_multiplicador(produtos):
     novo = produtos.criar("Anel", "Joia", 0, 1, "x", custo=20.0, multiplicador=2.5)
     assert novo["preco"] == 50.0
+
 
 def test_multiplicador_fora_da_faixa_e_rejeitado(client):
     resposta = client.post("/novo", data={
@@ -38,6 +40,7 @@ def test_multiplicador_fora_da_faixa_e_rejeitado(client):
         "multiplicador": "5", "estoque": "1", "descricao": "x",
     })
     assert "entre 1,5 e 4" in resposta.get_data(as_text=True)
+
 
 def test_produto_novo_nao_tem_foto(produtos):
     novo = produtos.criar("Anel", "Joia", 10, 1, "x")
@@ -65,8 +68,7 @@ def test_atualizar_nao_mexe_na_foto(produtos):
     assert produtos.buscar_por_id(novo["id"])["foto"] == "abc.jpg"
 
 
-def test_banco_em_centavos_ganha_coluna_foto(tmp_path, monkeypatch):
-    import importlib
+def test_banco_em_centavos_ganha_coluna_foto(tmp_path, abrir_banco):
     import sqlite3
 
     caminho = tmp_path / "sem_foto.db"
@@ -90,19 +92,15 @@ def test_banco_em_centavos_ganha_coluna_foto(tmp_path, monkeypatch):
     con.commit()
     con.close()
 
-    monkeypatch.setenv("DB_PATH", str(caminho))
-    import produtos
+    with abrir_banco(caminho) as produtos:
+        anel = produtos.buscar_por_nome("Anel")[0]
 
-    importlib.reload(produtos)
-
-    anel = produtos.buscar_por_nome("Anel")[0]
     assert anel["foto"] is None
     assert anel["preco_centavos"] == 1990
     assert anel["estoque"] == 2
 
 
-def test_banco_antigo_em_reais_tambem_ganha_foto(tmp_path, monkeypatch):
-    import importlib
+def test_banco_antigo_em_reais_tambem_ganha_foto(tmp_path, abrir_banco):
     import sqlite3
 
     caminho = tmp_path / "antigo.db"
@@ -126,14 +124,12 @@ def test_banco_antigo_em_reais_tambem_ganha_foto(tmp_path, monkeypatch):
     con.commit()
     con.close()
 
-    monkeypatch.setenv("DB_PATH", str(caminho))
-    import produtos
+    with abrir_banco(caminho) as produtos:
+        anel = produtos.buscar_por_nome("Anel")[0]
 
-    importlib.reload(produtos)
-
-    anel = produtos.buscar_por_nome("Anel")[0]
     assert anel["foto"] is None
     assert anel["preco_centavos"] == 1990
+
 
 def test_produto_novo_tem_embalagem_e_frete_zerados(produtos):
     from decimal import Decimal
@@ -193,8 +189,7 @@ def test_sem_multiplicador_a_embalagem_so_e_guardada(produtos):
     assert novo["embalagem"] == Decimal("3.00")
 
 
-def test_banco_com_foto_ganha_embalagem_e_frete(tmp_path, monkeypatch):
-    import importlib
+def test_banco_com_foto_ganha_embalagem_e_frete(tmp_path, abrir_banco):
     import sqlite3
     from decimal import Decimal
 
@@ -220,20 +215,16 @@ def test_banco_com_foto_ganha_embalagem_e_frete(tmp_path, monkeypatch):
     con.commit()
     con.close()
 
-    monkeypatch.setenv("DB_PATH", str(caminho))
-    import produtos
+    with abrir_banco(caminho) as produtos:
+        anel = produtos.buscar_por_nome("Anel")[0]
 
-    importlib.reload(produtos)
-
-    anel = produtos.buscar_por_nome("Anel")[0]
     assert anel["embalagem"] == Decimal("0.00")
     assert anel["frete"] == Decimal("0.00")
     assert anel["foto"] == "abc.jpg"
     assert anel["preco_centavos"] == 1990
 
 
-def test_banco_antigo_em_reais_ganha_embalagem_e_frete(tmp_path, monkeypatch):
-    import importlib
+def test_banco_antigo_em_reais_ganha_embalagem_e_frete(tmp_path, abrir_banco):
     import sqlite3
     from decimal import Decimal
 
@@ -258,12 +249,9 @@ def test_banco_antigo_em_reais_ganha_embalagem_e_frete(tmp_path, monkeypatch):
     con.commit()
     con.close()
 
-    monkeypatch.setenv("DB_PATH", str(caminho))
-    import produtos
+    with abrir_banco(caminho) as produtos:
+        anel = produtos.buscar_por_nome("Anel")[0]
 
-    importlib.reload(produtos)
-
-    anel = produtos.buscar_por_nome("Anel")[0]
     assert anel["preco_centavos"] == 1990
     assert anel["embalagem"] == Decimal("0.00")
     assert anel["frete"] == Decimal("0.00")
