@@ -6,12 +6,7 @@ from flask import (
 
 from adonai.dados import produtos
 from adonai.regras import fotos
-from adonai.regras.validacao import (
-    decimal_ou_none,
-    numero_ou_none,
-    preco_do_formulario,
-    validar_formulario,
-)
+from adonai.regras.validacao import campos_do_produto, validar_formulario
 
 bp = Blueprint("produtos", __name__)
 
@@ -68,18 +63,7 @@ def novo():
             nome_foto = fotos.salvar_foto(foto, pasta)
 
         try:
-            produtos.criar(
-                nome=request.form["nome"].strip(),
-                categoria=request.form["categoria"].strip(),
-                preco=preco_do_formulario(request.form),
-                estoque=int(request.form["estoque"]),
-                descricao=request.form["descricao"].strip(),
-                custo=decimal_ou_none(request.form.get("custo", "")) or 0,
-                multiplicador=numero_ou_none(request.form.get("multiplicador", "")) or 0,
-                foto=nome_foto,
-                embalagem=decimal_ou_none(request.form.get("embalagem", "")) or 0,
-                frete=decimal_ou_none(request.form.get("frete", "")) or 0,
-            )
+            produtos.criar(**campos_do_produto(request.form), foto=nome_foto)
         except Exception:
             fotos.remover_foto(nome_foto, pasta)
             raise
@@ -130,18 +114,7 @@ def editar(produto_id):
         nova_foto = fotos.salvar_foto(foto, pasta) if trocar else None
 
         try:
-            produtos.atualizar(
-                produto_id,
-                nome=request.form["nome"].strip(),
-                categoria=request.form["categoria"].strip(),
-                preco=preco_do_formulario(request.form),
-                estoque=int(request.form["estoque"]),
-                descricao=request.form["descricao"].strip(),
-                custo=decimal_ou_none(request.form.get("custo", "")) or 0,
-                multiplicador=numero_ou_none(request.form.get("multiplicador", "")) or 0,
-                embalagem=decimal_ou_none(request.form.get("embalagem", "")) or 0,
-                frete=decimal_ou_none(request.form.get("frete", "")) or 0,
-            )
+            produtos.atualizar(produto_id, **campos_do_produto(request.form))
 
             if nova_foto:
                 produtos.definir_foto(produto_id, nova_foto)

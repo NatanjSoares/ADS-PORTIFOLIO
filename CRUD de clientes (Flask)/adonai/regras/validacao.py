@@ -97,3 +97,16 @@ def validar_formulario(form):
         return "A descrição é obrigatória."
 
     return None
+def campos_do_produto(form):
+    """Converte o formulário nos campos que o banco recebe (sem a foto)."""
+    return {
+        "nome": form["nome"].strip(),
+        "categoria": form["categoria"].strip(),
+        "preco": preco_do_formulario(form),
+        "estoque": int(form["estoque"]),
+        "descricao": form["descricao"].strip(),
+        "custo": decimal_ou_none(form.get("custo", "")) or 0,
+        "multiplicador": numero_ou_none(form.get("multiplicador", "")) or 0,
+        "embalagem": decimal_ou_none(form.get("embalagem", "")) or 0,
+        "frete": decimal_ou_none(form.get("frete", "")) or 0,
+    }
