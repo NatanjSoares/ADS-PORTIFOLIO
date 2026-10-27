@@ -5,13 +5,13 @@
 <h1>Produtos</h1>
 
 <div class="topo">
-  <form class="busca" method="GET" action="{{ url_for('listar') }}">
+  <form class="busca" method="GET" action="{{ url_for('produtos.listar') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="text" name="q" placeholder="Buscar produto..." value="{{ termo }}">
     <button type="submit">Buscar</button>
   </form>
 
-  <a class="botao" href="{{ url_for('novo') }}">Novo produto</a>
+  <a class="botao" href="{{ url_for('produtos.novo') }}">Novo produto</a>
 </div>
 
 <table>
@@ -46,10 +46,10 @@
       <td>{{ produto.descricao }}</td>
       <td>
         <div class="acoes">
-          <a class="botao" href="{{ url_for('editar', produto_id=produto.id) }}">Editar</a>
+          <a class="botao" href="{{ url_for('produtos.editar', produto_id=produto.id) }}">Editar</a>
 
           <form class="form-inline" method="POST"
-                action="{{ url_for('excluir', produto_id=produto.id) }}"
+                action="{{ url_for('produtos.excluir', produto_id=produto.id) }}"
                 onsubmit="return confirm('Excluir este produto?')">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="perigo">Excluir</button>

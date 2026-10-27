@@ -3,8 +3,10 @@ from types import SimpleNamespace
 
 import pytest
 
-from adonai.dados import banco, multiplicadores, usuarios
+from adonai import create_app
+from adonai.dados import banco, multiplicadores
 from adonai.dados import produtos as dados_produtos
+from adonai.extensoes import limiter
 from adonai.regras import dinheiro
 
 
@@ -30,24 +32,21 @@ def _dados():
 
 @pytest.fixture
 def app_flask(tmp_path, monkeypatch):
-    """O app, apontando para um banco novo e vazio só deste teste."""
+    """Um app novo, com banco novo e vazio só deste teste."""
     monkeypatch.setenv("DB_PATH", str(tmp_path / "teste.db"))
     monkeypatch.setenv("SECRET_KEY", "chave-de-teste")
     monkeypatch.setenv("ADMIN_USER", "admin")
     monkeypatch.setenv("ADMIN_PASSWORD", "senha-de-teste")
 
-    import app as modulo_app
+    # Liga antes de criar: o limitador só se registra no app se estiver ligado.
+    limiter.enabled = True
 
-    flask_app = modulo_app.app
-    flask_app.config["DB_PATH"] = tmp_path / "teste.db"
-    flask_app.config["TESTING"] = True
-    flask_app.config["WTF_CSRF_ENABLED"] = False
-    flask_app.config["UPLOAD_FOLDER"] = tmp_path / "uploads"
-    modulo_app.limiter.enabled = False
-
-    with flask_app.app_context():
-        banco.inicializar_banco()
-        usuarios.inicializar_usuarios()
+    flask_app = create_app({
+        "TESTING": True,
+        "WTF_CSRF_ENABLED": False,
+        "UPLOAD_FOLDER": tmp_path / "uploads",
+    })
+    limiter.enabled = False
 
     return flask_app
 
@@ -85,20 +84,16 @@ def client(client_anonimo):
 
 
 @pytest.fixture
-def client_com_csrf(client_anonimo):
-    import app as modulo_app
-
-    modulo_app.app.config["WTF_CSRF_ENABLED"] = True
+def client_com_csrf(client_anonimo, app_flask):
+    app_flask.config["WTF_CSRF_ENABLED"] = True
     yield client_anonimo
-    modulo_app.app.config["WTF_CSRF_ENABLED"] = False
+    app_flask.config["WTF_CSRF_ENABLED"] = False
 
 
 @pytest.fixture
 def client_com_limite(client_anonimo):
-    import app as modulo_app
-
-    modulo_app.limiter.reset()
-    modulo_app.limiter.enabled = True
+    limiter.reset()
+    limiter.enabled = True
     yield client_anonimo
-    modulo_app.limiter.enabled = False
-    modulo_app.limiter.reset()
+    limiter.enabled = False
+    limiter.reset()

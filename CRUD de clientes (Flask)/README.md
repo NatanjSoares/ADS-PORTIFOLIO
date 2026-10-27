@@ -138,7 +138,7 @@ No PowerShell, defina as variáveis e inicie:
 $env:SECRET_KEY="sua-chave"
 $env:ADMIN_USER="admin"
 $env:ADMIN_PASSWORD="sua-senha"
-python app.py
+python wsgi.py
 ```
 
 Acesse http://127.0.0.1:5000. Nesse modo, o banco fica em `produtos.db` na pasta do projeto.
@@ -153,7 +153,7 @@ Acesse http://127.0.0.1:5000. Nesse modo, o banco fica em `produtos.db` na pasta
 | `DB_PATH` | Não | Caminho do banco; no Docker é `/data/produtos.db` |
 | `UPLOAD_DIR` | Não | Pasta das fotos; deve ficar dentro de `static/` (padrão `static/uploads`) |
 | `COOKIE_SEGURO` | Não | Use `1` ao hospedar com HTTPS |
-| `FLASK_DEBUG` | Não | Use `1` para o modo de depuração ao rodar `python app.py` |
+| `FLASK_DEBUG` | Não | Use `1` para o modo de depuração ao rodar `python wsgi.py` |
 
 ## Rotas
 

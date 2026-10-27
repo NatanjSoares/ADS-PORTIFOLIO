@@ -64,7 +64,7 @@ def test_extensoes_estao_ligadas_ao_app(client):
 
 
 def test_so_o_login_e_os_arquivos_estaticos_sao_publicos():
-    assert ROTAS_PUBLICAS == {"login", "static"}
+        assert ROTAS_PUBLICAS == {"auth.login", "static"}
 
 
 def test_banco_padrao_fica_na_raiz_do_projeto(monkeypatch):

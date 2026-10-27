@@ -4,7 +4,7 @@ from flask import flash, redirect, render_template, request, session, url_for
 from flask_wtf.csrf import CSRFError
 from werkzeug.exceptions import RequestEntityTooLarge
 
-ROTAS_PUBLICAS = {"login", "static"}
+ROTAS_PUBLICAS = {"auth.login", "static"}
 
 
 def registrar(app):
@@ -14,14 +14,14 @@ def registrar(app):
     def csrf_invalido(erro):
         app.logger.warning("CSRF recusado em %s: %s", request.path, erro.description)
         flash("Formulário expirado ou inválido. Tente novamente.", "erro")
-        return redirect(url_for("home"))
+        return redirect(url_for("produtos.home"))
 
     @app.before_request
     def exigir_login():
         if request.endpoint in ROTAS_PUBLICAS:
             return None
         if not session.get("usuario"):
-            return redirect(url_for("login"))
+            return redirect(url_for("auth.login"))
 
     @app.errorhandler(429)
     def muitas_tentativas(erro):

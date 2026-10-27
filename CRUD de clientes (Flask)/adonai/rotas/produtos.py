@@ -1,85 +1,27 @@
-import os
-from datetime import timedelta
+"""Rotas de produtos: página inicial, lista, cadastro, edição e exclusão."""
 
 from flask import (
-    Flask, render_template, request, redirect, url_for, flash, session
+    Blueprint, current_app, flash, redirect, render_template, request, url_for
 )
-from flask_wtf.csrf import CSRFError, CSRFProtect
-from adonai.dados import banco, multiplicadores, produtos, usuarios
-from adonai.regras import dinheiro
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-from pathlib import Path
 
-from werkzeug.exceptions import RequestEntityTooLarge
-
+from adonai.dados import produtos
 from adonai.regras import fotos
-from adonai.regras.estatisticas import calcular_painel
 from adonai.regras.validacao import (
     decimal_ou_none,
     numero_ou_none,
     preco_do_formulario,
     validar_formulario,
 )
-from adonai.config import carregar_config
-from adonai.extensoes import csrf, limiter
-from adonai.seguranca import registrar as registrar_seguranca
-app = Flask(__name__)
 
-app.config.from_mapping(carregar_config())
-csrf.init_app(app)
-limiter.init_app(app)
-registrar_seguranca(app)
+bp = Blueprint("produtos", __name__)
 
 
-with app.app_context():
-    banco.inicializar_banco()
-    usuarios.inicializar_usuarios()
-
-def chave_usuario():
-    return "usuario:" + request.form.get("usuario", "").strip().lower()
-
-
-@app.route("/login", methods=["GET", "POST"])
-@limiter.limit("5 per minute; 30 per hour", methods=["POST"])
-@limiter.limit("10 per hour", methods=["POST"], key_func=chave_usuario)
-def login():
-    if session.get("usuario"):
-        return redirect(url_for("home"))
-
-    if request.method == "POST":
-        usuario = request.form.get("usuario", "").strip()
-        senha = request.form.get("senha", "")
-
-        if usuarios.verificar_login(usuario, senha):
-            session.clear()
-            session["usuario"] = usuario
-            session.permanent = True
-            return redirect(url_for("home"))
-
-        flash("Usuário ou senha inválidos.", "erro")
-
-    return render_template("login.html")
-
-
-@app.route("/logout", methods=["POST"])
-def logout():
-    session.clear()
-    flash("Você saiu do sistema.", "sucesso")
-    return redirect(url_for("login"))
-
-
-
-@app.context_processor
-def injetar_multiplicadores():
-    return {"multiplicadores": multiplicadores.listar_multiplicadores()}
-
-
-@app.route("/")
+@bp.route("/")
 def home():
     return render_template("home.html")
 
-@app.route("/produtos")
+
+@bp.route("/produtos")
 def listar():
     """READ — lista todos os produtos, com busca opcional por nome."""
 
@@ -98,7 +40,7 @@ def listar():
     )
 
 
-@app.route("/novo", methods=["GET", "POST"])
+@bp.route("/novo", methods=["GET", "POST"])
 def novo():
     """CREATE — cadastra um novo produto (a foto é opcional)."""
 
@@ -119,7 +61,7 @@ def novo():
                 titulo="Novo produto"
             )
 
-        pasta = app.config["UPLOAD_FOLDER"]
+        pasta = current_app.config["UPLOAD_FOLDER"]
         nome_foto = None
 
         if fotos.tem_foto(foto):
@@ -144,7 +86,7 @@ def novo():
 
         flash("Produto cadastrado com sucesso.", "sucesso")
 
-        return redirect(url_for("listar"))
+        return redirect(url_for("produtos.listar"))
 
     return render_template(
         "form.html",
@@ -153,7 +95,7 @@ def novo():
     )
 
 
-@app.route("/editar/<int:produto_id>", methods=["GET", "POST"])
+@bp.route("/editar/<int:produto_id>", methods=["GET", "POST"])
 def editar(produto_id):
     """UPDATE — edita um produto existente (e a foto, se for o caso)."""
 
@@ -162,7 +104,7 @@ def editar(produto_id):
     if produto is None:
         flash("Produto não encontrado.", "erro")
 
-        return redirect(url_for("listar"))
+        return redirect(url_for("produtos.listar"))
 
     if request.method == "POST":
 
@@ -181,7 +123,7 @@ def editar(produto_id):
                 titulo="Editar produto"
             )
 
-        pasta = app.config["UPLOAD_FOLDER"]
+        pasta = current_app.config["UPLOAD_FOLDER"]
         foto_antiga = produto["foto"]
         trocar = fotos.tem_foto(foto)
         remover = bool(request.form.get("remover_foto"))
@@ -215,7 +157,7 @@ def editar(produto_id):
 
         flash("Produto atualizado com sucesso.", "sucesso")
 
-        return redirect(url_for("listar"))
+        return redirect(url_for("produtos.listar"))
 
     return render_template(
         "form.html",
@@ -224,54 +166,16 @@ def editar(produto_id):
     )
 
 
-@app.route("/excluir/<int:produto_id>", methods=["POST"])
+@bp.route("/excluir/<int:produto_id>", methods=["POST"])
 def excluir(produto_id):
     """DELETE — remove um produto e a foto dele."""
 
     produto = produtos.buscar_por_id(produto_id)
 
     if produto and produtos.excluir(produto_id):
-        fotos.remover_foto(produto["foto"], app.config["UPLOAD_FOLDER"])
+        fotos.remover_foto(produto["foto"], current_app.config["UPLOAD_FOLDER"])
         flash("Produto excluído.", "sucesso")
     else:
         flash("Produto não encontrado.", "erro")
 
-    return redirect(url_for("listar"))
-
-
-@app.route("/multiplicadores", methods=["GET", "POST"])
-def multiplicadores_view():
-    if request.method == "POST":
-        nome = request.form.get("nome", "").strip()
-        valor = numero_ou_none(request.form.get("valor", ""))
-        mult_id = request.form.get("id")
-
-        if not nome:
-            flash("O nome do multiplicador é obrigatório.", "erro")
-        elif valor is None or not (dinheiro.MULT_MIN <= valor <= dinheiro.MULT_MAX):
-            flash("O valor deve estar entre 1,5 e 4.", "erro")
-        else:
-            if mult_id:
-                multiplicadores.atualizar_multiplicador(int(mult_id), nome, valor)
-            else:
-                multiplicadores.criar_multiplicador(nome, valor)
-            flash("Multiplicador salvo.", "sucesso")
-        return redirect(url_for("multiplicadores_view"))
-
-    return render_template("multiplicadores.html")
-
-
-@app.route("/multiplicadores/<int:mult_id>/excluir", methods=["POST"])
-def excluir_multiplicador(mult_id):
-    multiplicadores.excluir_multiplicador(mult_id)
-    flash("Multiplicador excluído.", "sucesso")
-    return redirect(url_for("multiplicadores_view"))
-
-@app.route("/dashboard")
-def dashboard():
-    dados, resumo = calcular_painel(produtos.listar_todos())
-    return render_template("dashboard.html", dados=dados, resumo=resumo)
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000,
-            debug=os.environ.get("FLASK_DEBUG") == "1")
+    return redirect(url_for("produtos.listar"))

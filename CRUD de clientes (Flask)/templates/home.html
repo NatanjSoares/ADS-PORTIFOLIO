@@ -8,20 +8,20 @@
   <section class="hero-texto">
     <h1>Elegância que permanece.</h1>
     <p>Prata e semijoias para momentos que merecem ser eternizados.</p>
-    <a class="botao" href="{{ url_for('listar') }}">Ver produtos</a>
+    <a class="botao" href="{{ url_for('produtos.listar') }}">Ver produtos</a>
   </section>
 
   <section class="cards">
     <article class="card">
       <h3>Produtos</h3>
       <p>Consulte, edite e exclua produtos.</p>
-      <a class="botao" href="{{ url_for('listar') }}">Ver produtos</a>
+      <a class="botao" href="{{ url_for('produtos.listar') }}">Ver produtos</a>
     </article>
 
     <article class="card">
       <h3>Novo produto</h3>
       <p>Cadastre um novo produto no sistema.</p>
-      <a class="botao" href="{{ url_for('novo') }}">Cadastrar</a>
+      <a class="botao" href="{{ url_for('produtos.novo') }}">Cadastrar</a>
     </article>
   </section>
 {% endblock %}

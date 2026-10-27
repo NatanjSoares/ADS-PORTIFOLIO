@@ -10,7 +10,7 @@
   <tr>
     <td>
       <form id="mult-{{ m.id }}" class="form-inline" method="POST"
-            action="{{ url_for('multiplicadores_view') }}">
+            action="{{ url_for('multiplicadores.multiplicadores_view') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="id" value="{{ m.id }}">
       </form>
@@ -24,14 +24,14 @@
     <td>
       <button type="submit" form="mult-{{ m.id }}">Salvar</button>
       <button type="submit" form="mult-{{ m.id }}" class="perigo"
-              formaction="{{ url_for('excluir_multiplicador', mult_id=m.id) }}"
+              formaction="{{ url_for('multiplicadores.excluir_multiplicador', mult_id=m.id) }}"
               onclick="return confirm('Excluir este multiplicador?')">Excluir</button>
     </td>
   </tr>
   {% endfor %}
 </table>
 
-<form method="POST" action="{{ url_for('multiplicadores_view') }}">
+<form method="POST" action="{{ url_for('multiplicadores.multiplicadores_view') }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <h3>Novo multiplicador</h3>
   <div>
