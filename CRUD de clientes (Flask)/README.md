@@ -94,6 +94,27 @@ CRUD de clientes (Flask)/
 
 O fluxo do GitHub Actions fica em `.github/workflows/`, e a configuração do pre-commit em `.pre-commit-config.yaml`, os dois na raiz do repositório.
 
+## Organização do código
+
+O código foi reorganizado **sem mudar o comportamento** (mesmas URLs, telas, mensagens e dados), com os testes como rede de segurança. O `app.py`, que concentrava quase tudo, foi dividido por assunto.
+
+| | Antes | Depois |
+|---|---|---|
+| Arquivos de código (sem testes) | 6 | 21 |
+| Linhas de código | 942 | 1.074 |
+| Maior arquivo | `app.py` (427 linhas) | `rotas/produtos.py` (160 linhas) |
+| Arquivos de teste | 6 | 26 |
+| Linhas de teste | 1.270 | 2.001 |
+
+O código cresceu cerca de 14%, por causa de importações, descrições (*docstrings*) e arquivos novos. Em troca, cada assunto tem o seu lugar e os testes passaram a cobrir a estrutura (233 testes). As linhas contam também espaços em branco e comentários.
+
+| Antes | Depois |
+|---|---|
+| `app.py` | `wsgi.py`, `adonai/__init__.py` (`create_app`), `adonai/rotas/`, `adonai/seguranca.py`, `adonai/config.py`, `adonai/extensoes.py` e parte de `adonai/regras/` |
+| `produtos.py` | `adonai/dados/` (banco, produtos e multiplicadores) |
+| `usuarios.py` | `adonai/dados/usuarios.py` |
+| `fotos.py` e `dinheiro.py` | `adonai/regras/` |
+
 ## Como executar
 
 ### Com Docker (recomendado)

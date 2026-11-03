@@ -33,6 +33,9 @@ jobs:
       - name: Instalar dependências
         run: pip install -r requirements-dev.txt
 
+      - name: Verificar o código com o Ruff
+        run: python -m ruff check .
+
       - name: Rodar os testes
         run: python -m pytest -v
   imagem-docker:
