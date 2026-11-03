@@ -1,8 +1,6 @@
 """Entrada e saída do sistema: login e logout."""
 
-from flask import (
-    Blueprint, flash, redirect, render_template, request, session, url_for
-)
+from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 
 from adonai.dados import usuarios
 from adonai.extensoes import limiter

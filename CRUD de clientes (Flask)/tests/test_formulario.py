@@ -3,6 +3,7 @@
 from decimal import Decimal
 
 from ajudantes import _dados
+
 from adonai.regras.validacao import campos_do_produto
 
 CHAVES = {
@@ -20,7 +21,7 @@ def test_formulario_minimo_vira_os_campos_do_produto():
     assert campos["categoria"] == "Joia"
     assert campos["descricao"] == "x"
     assert campos["estoque"] == 3
-    assert campos["preco"] == Decimal("10")
+    assert campos["preco"] == Decimal(10)
 
 
 def test_campos_opcionais_vazios_viram_zero():

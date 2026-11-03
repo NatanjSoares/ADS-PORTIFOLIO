@@ -19,7 +19,7 @@ Projeto de portfólio do curso de Análise e Desenvolvimento de Sistemas, com id
 - **Dinheiro em centavos:** valores guardados como inteiros e calculados com `Decimal`, sem erros de arredondamento
 - **Validação no servidor**, com mensagens de erro e de sucesso
 - **Docker** com volumes para o banco e para as fotos
-- **Testes automatizados** (136) rodando no GitHub Actions a cada push
+- **Testes automatizados** (233) rodando no GitHub Actions a cada push
 
 ## Telas
 
@@ -57,35 +57,42 @@ Se o produto não usa multiplicador, o preço é informado manualmente. Embalage
 - Flask-WTF (CSRF) e Flask-Limiter (limite de tentativas)
 - Docker e Docker Compose
 - pytest e GitHub Actions (com Dependabot para manter as actions atualizadas)
+- Ruff (análise do código) e pre-commit
 
 ## Estrutura do projeto
 
 ```
 CRUD de clientes (Flask)/
-├── app.py                 # rotas, validação, login e proteção das páginas
-├── produtos.py            # banco: produtos, multiplicadores e migrações
-├── usuarios.py            # usuários e verificação de senha
-├── fotos.py               # validar, salvar e apagar fotos
-├── dinheiro.py            # valores monetários em centavos (Decimal)
+├── wsgi.py                # ponto de entrada (gunicorn wsgi:app)
+├── criar_usuario.py       # cria ou atualiza um usuário pelo terminal
+├── adonai/
+│   ├── __init__.py        # create_app()
+│   ├── config.py          # configuração lida do ambiente
+│   ├── extensoes.py       # CSRF e limite de tentativas
+│   ├── seguranca.py       # login obrigatório e tratamento de erros
+│   ├── rotas/             # blueprints: auth, produtos, multiplicadores e dashboard
+│   ├── regras/            # validação, dinheiro, fotos e estatísticas
+│   └── dados/             # banco, produtos, multiplicadores e usuários
 ├── templates/             # base, home, listar, form, multiplicadores, dashboard, login
 ├── static/
 │   ├── css/               # CSS modular (main.css importa os demais)
 │   ├── js/                # preco.js, foto.js, ampliar.js e dashboard.js
 │   ├── img/               # hero, imagem padrão e favicons
 │   └── uploads/           # fotos enviadas (fora do Git)
-├── tests/                 # conftest.py e testes de rotas, banco, fotos, dinheiro e configuração
+├── tests/                 # conftest.py, ajudantes.py e testes por assunto
 ├── docs/                  # prints usados neste README
 ├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt       # dependências do app
-├── requirements-dev.txt   # dependências + pytest
+├── requirements-dev.txt   # dependências + pytest, Ruff e pre-commit
+├── pyproject.toml         # configuração do Ruff
 ├── pytest.ini
 ├── .env.example
 ├── .gitignore
 └── .dockerignore
 ```
 
-O fluxo do GitHub Actions fica em `.github/workflows/`, na raiz do repositório.
+O fluxo do GitHub Actions fica em `.github/workflows/`, e a configuração do pre-commit em `.pre-commit-config.yaml`, os dois na raiz do repositório.
 
 ## Como executar
 
@@ -189,15 +196,25 @@ pip install -r requirements-dev.txt
 python -m pytest -v
 ```
 
-São **136 testes**, com banco e pasta de fotos temporários (nada do seu ambiente é alterado):
+São **233 testes**, com banco e pasta de fotos temporários (nada do seu ambiente é alterado):
 
 - **Banco e dinheiro:** criar, buscar, atualizar e excluir; cálculo com embalagem; arredondamento; migrações de bancos antigos
 - **Fotos:** formatos aceitos e recusados, arquivo falso com extensão de imagem, limite de tamanho, nomes maliciosos e remoção
 - **Rotas:** cadastro, edição e exclusão (com e sem foto), validações, multiplicadores e dashboard
 - **Segurança:** acesso sem login, senha com hash, token CSRF obrigatório, limite de tentativas e upload sem login
 - **Guardas:** todo formulário tem token CSRF, todo arquivo citado nos templates e nos CSS existe, o `main.css` importa todos os módulos e os arquivos de configuração protegem segredos
+- **Estrutura:** o app é criado por `create_app()`, as rotas ficam em blueprints e o `wsgi.py` é o ponto de entrada
 
 O GitHub Actions roda a suíte a cada push, e o selo no topo mostra o resultado.
+
+O código é verificado com o Ruff, e o pre-commit roda essa verificação antes de cada commit:
+
+```
+python -m ruff check .
+python -m pre_commit install
+```
+
+O `pre-commit install` é feito uma vez, dentro do repositório.
 
 ## Segurança
 
@@ -215,10 +232,10 @@ O GitHub Actions roda a suíte a cada push, e o selo no topo mostra o resultado.
 - Containerização com Docker, volumes e imagem sem segredos
 - Testes que protegem o projeto (e um CI que pegou meus próprios erros)
 - Definir os requisitos antes de programar
+- Reorganizar um projeto sem mudar o comportamento, usando os testes como rede de segurança (*app factory*, *blueprints*, Ruff e pre-commit)
 
 ## Próximos passos
 
-- Reorganizar o código com *app factory* e *blueprints*, e dividir os testes por assunto
 - Níveis de acesso (administrador e leitor)
 - Parte de vendas, com migração do banco para PostgreSQL
 - Deploy

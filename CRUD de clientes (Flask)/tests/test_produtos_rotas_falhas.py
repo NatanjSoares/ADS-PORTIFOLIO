@@ -1,14 +1,13 @@
 """Se o banco falha, a foto recém-enviada não pode ficar sobrando no disco."""
 
 import pytest
-
 from ajudantes import (
     JPG,
-    PNG,
     MULTIPART,
-    _dados_foto,
+    PNG,
     _arquivos_enviados,
     _criar_com_foto,
+    _dados_foto,
 )
 
 

@@ -23,7 +23,7 @@ def preco_do_formulario(form):
     embalagem = decimal_ou_none(form.get("embalagem", "")) or 0
 
     if custo and mult:
-     return dinheiro.calcular_preco(custo, mult, embalagem)
+        return dinheiro.calcular_preco(custo, mult, embalagem)
     return decimal_ou_none(form.get("preco", ""))
 
 
@@ -66,7 +66,7 @@ def validar_formulario(form):
 
         if valor_preco < 0:
             return "O preço não pode ser negativo."
-    
+
     embalagem = form.get("embalagem", "").strip()
     frete = form.get("frete", "").strip()
 

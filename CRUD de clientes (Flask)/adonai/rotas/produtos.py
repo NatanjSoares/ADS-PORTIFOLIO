@@ -1,7 +1,13 @@
 """Rotas de produtos: página inicial, lista, cadastro, edição e exclusão."""
 
 from flask import (
-    Blueprint, current_app, flash, redirect, render_template, request, url_for
+    Blueprint,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
 )
 
 from adonai.dados import produtos

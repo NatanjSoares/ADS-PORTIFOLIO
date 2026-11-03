@@ -4,6 +4,7 @@ import pytest
 from werkzeug.datastructures import FileStorage
 
 from adonai.regras import fotos
+
 # Cabeçalhos mínimos de cada formato (o que o validador confere)
 JPG = b"\xff\xd8\xff\xe0" + b"\x00" * 100
 PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 100

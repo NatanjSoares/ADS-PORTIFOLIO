@@ -28,7 +28,7 @@ def test_post_com_token_csrf_valido_funciona(client_com_csrf, produtos):
 def test_todo_formulario_post_tem_token_csrf():
     pasta = Path(__file__).parent.parent / "templates"
     padrao = re.compile(
-        r'<form\b[^>]*\bmethod\s*=\s*"POST"[^>]*>(.*?)</form>', re.I | re.S
+        r'<form\b[^>]*\bmethod\s*=\s*"POST"[^>]*>(.*?)</form>', re.IGNORECASE | re.DOTALL
     )
     sem_token = []
 
