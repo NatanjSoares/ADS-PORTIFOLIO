@@ -62,7 +62,7 @@ Se o produto não usa multiplicador, o preço é informado manualmente. Embalage
 ## Estrutura do projeto
 
 ```
-CRUD de clientes (Flask)/
+adonai-produtos/
 ├── wsgi.py                # ponto de entrada (gunicorn wsgi:app)
 ├── criar_usuario.py       # cria ou atualiza um usuário pelo terminal
 ├── adonai/

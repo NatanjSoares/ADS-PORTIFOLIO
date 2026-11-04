@@ -2,8 +2,8 @@ repos:
   - repo: local
     hooks:
       - id: ruff
-        name: ruff (CRUD de clientes)
+        name: ruff (adonai-produtos)
         entry: python -m ruff check
         language: system
         types: [python]
-        files: '^CRUD de clientes \(Flask\)/'
+        files: '^adonai-produtos/'

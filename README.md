@@ -10,7 +10,7 @@ Neste repositório publico todos os projetos desenvolvidos durante meus estudos.
 
 | Projeto | Tecnologias | O que faz |
 |---|---|---|
-| [ADONAI — Gestão de produtos](CRUD%20de%20clientes%20%28Flask%29) | Python, Flask, SQLite, Docker, pytest, GitHub Actions | Área administrativa de uma marca de semijoias: CRUD de produtos com foto, preço por multiplicadores, dashboard, login com proteção CSRF e limite de tentativas; testes automatizados e código organizado em app factory e blueprints |
+| [ADONAI — Gestão de produtos](adonai-produtos) | Python, Flask, SQLite, Docker, pytest, GitHub Actions | Área administrativa de uma marca de semijoias: CRUD de produtos com foto, preço por multiplicadores, dashboard, login com proteção CSRF e limite de tentativas; testes automatizados e código organizado em app factory e blueprints |
 | [Calculadora de salário líquido](faculdade-ads/frameworks-para-desenvolvimento/atividade-02-flask-docker-kubernetes) | Python, Flask, Docker, Kubernetes | App web com formulário, validação no backend e cálculo de INSS, IR e dependentes; empacotado com Docker e manifests Kubernetes |
 | [Testes unitários com JUnit](faculdade-ads/qualidade-e-automacao-de-testes/atividade-01-calculadora) | Java, JUnit 5, Maven | Classe `Calculadora` com testes unitários e parametrizados, incluindo exceção na divisão por zero |
 | [Cadastro de produtos (Android)](faculdade-ads/frameworks-para-desenvolvimento/atividade-01-android-sqlite) | Kotlin, Java, SQLite | App Android que cadastra e lista produtos em banco local, com validações |
