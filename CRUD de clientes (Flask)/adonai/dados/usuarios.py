@@ -1,16 +1,17 @@
+"""Acesso ao banco: tabela de usuários e verificação de login."""
+
 import os
 from contextlib import closing
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
-import produtos
-
+from adonai.dados import banco
 
 HASH_FALSO = generate_password_hash("senha-falsa")
 
 
 def inicializar_usuarios():
-    with closing(produtos._conectar()) as conexao, conexao:
+    with closing(banco.conectar()) as conexao, conexao:
         conexao.execute(
             """
             CREATE TABLE IF NOT EXISTS usuarios (
@@ -35,7 +36,7 @@ def inicializar_usuarios():
 
 
 def verificar_login(usuario, senha):
-    with closing(produtos._conectar()) as conexao, conexao:
+    with closing(banco.conectar()) as conexao, conexao:
         linha = conexao.execute(
             "SELECT senha_hash FROM usuarios WHERE usuario = ?",
             (usuario,),

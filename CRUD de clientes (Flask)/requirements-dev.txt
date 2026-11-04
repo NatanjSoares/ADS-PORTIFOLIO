@@ -1,2 +1,4 @@
-﻿-r requirements.txt
+-r requirements.txt
 pytest
+ruff==0.17.3
+pre-commit==4.7.0

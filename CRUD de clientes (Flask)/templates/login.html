@@ -9,7 +9,7 @@
     <p class="login-area">Área administrativa</p>
     <h1>Entrar</h1>
 
-    <form method="POST" action="{{ url_for('login') }}">
+    <form method="POST" action="{{ url_for('auth.login') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
       <div>

@@ -12,3 +12,4 @@ data/
 backup/
 *.md
 static/uploads/
+.ruff_cache/

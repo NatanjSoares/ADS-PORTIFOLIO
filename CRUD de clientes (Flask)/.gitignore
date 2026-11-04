@@ -7,3 +7,4 @@ __pycache__/
 static/uploads/*
 !static/uploads/.gitkeep
 backup/
+.ruff_cache/

@@ -10,3 +10,16 @@ th, td { padding: 14px 16px; }
   gap: 10px;
   align-items: center;
 }
+td.valor { white-space: nowrap; }
+
+/* barra de cima da lista: busca e botão lado a lado */
+.topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin-bottom: 20px;
+}
+
+.topo .busca { flex: 1 1 320px; margin: 0; }
+.topo .botao { margin: 0; }

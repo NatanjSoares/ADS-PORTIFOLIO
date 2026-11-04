@@ -19,3 +19,10 @@ button:hover, .botao:hover {
 .erro    { background: #f3d9d4; color: #7a1f1f; border-left: 4px solid #8b2e2e; }
 a.botao, button { text-decoration: none; }
 a { color: var(--verde); }
+/* botões em forma de link (Novo produto, Editar, Voltar) */
+a.botao {
+  display: inline-block;
+  padding: 10px 18px;
+  text-decoration: none;
+  line-height: 1.2;
+}

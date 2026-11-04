@@ -10,13 +10,13 @@
 <body>
    {% if session.get('usuario') %}
   <nav>
-    <a href="{{ url_for('home') }}">Home</a>
-    <a href="{{ url_for('listar') }}">Produtos</a>
-    <a href="{{ url_for('novo') }}">Novo produto</a>
-    <a href="{{ url_for('multiplicadores_view') }}">Multiplicadores</a>
-    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('produtos.home') }}">Home</a>
+    <a href="{{ url_for('produtos.listar') }}">Produtos</a>
+    <a href="{{ url_for('produtos.novo') }}">Novo produto</a>
+    <a href="{{ url_for('multiplicadores.multiplicadores_view') }}">Multiplicadores</a>
+    <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
 
-    <form class="form-inline" method="POST" action="{{ url_for('logout') }}">
+    <form class="form-inline" method="POST" action="{{ url_for('auth.logout') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit">Sair</button>
     </form>

@@ -1,0 +1,1 @@
+"""Rotas do sistema, separadas por assunto (blueprints)."""
