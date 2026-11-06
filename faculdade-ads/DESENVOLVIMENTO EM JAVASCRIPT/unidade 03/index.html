@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Jokenpô - Aula Prática</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Jokenpô</h1>
+        <p class="instrucao">Escolha sua jogada para enfrentar o computador:</p>
+
+        <!-- Botões de Escolha do Usuário -->
+        <div class="opcoes">
+            <button class="btn-opcao" id="pedra" onclick="jogar('pedra')">
+                <span class="icone">🪨</span>
+                <span>Pedra</span>
+            </button>
+            <button class="btn-opcao" id="papel" onclick="jogar('papel')">
+                <span class="icone">📄</span>
+                <span>Papel</span>
+            </button>
+            <button class="btn-opcao" id="tesoura" onclick="jogar('tesoura')">
+                <span class="icone">✂️</span>
+                <span>Tesoura</span>
+            </button>
+        </div>
+
+        <!-- Painel de Comparação -->
+        <div class="arena">
+            <div class="card-jogada">
+                <h3>Você</h3>
+                <div class="escolha-box" id="escolha-usuario">❓</div>
+            </div>
+            <div class="vs">VS</div>
+            <div class="card-jogada">
+                <h3>Computador</h3>
+                <div class="escolha-box" id="escolha-computador">❓</div>
+            </div>
+        </div>
+
+        <!-- Exibição do Resultado -->
+        <div class="resultado-box">
+            <h2 id="mensagem-resultado">Faça sua escolha!</h2>
+        </div>
+
+        <!-- Placar e Reinício -->
+        <div class="placar">
+            <p>Vitórias: <span id="vitorias">0</span> | Derrotas: <span id="derrotas">0</span> | Empates: <span id="empates">0</span></p>
+        </div>
+
+        <button class="btn-reiniciar" onclick="reiniciarJogo()">Reiniciar Placar</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
