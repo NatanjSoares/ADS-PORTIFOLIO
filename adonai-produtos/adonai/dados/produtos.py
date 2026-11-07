@@ -145,3 +145,48 @@ def excluir(produto_id):
             (produto_id,),
         )
         return cursor.rowcount > 0
+
+def nomes_cadastrados():
+    """Nomes de todos os produtos (a importação usa para evitar repetidos)."""
+    with closing(banco.conectar()) as conexao, conexao:
+        linhas = conexao.execute("SELECT nome FROM produtos").fetchall()
+        return [linha["nome"] for linha in linhas]
+
+
+def criar_varios(lista):
+    """Cadastra vários produtos de uma vez: ou grava todos, ou nenhum.
+
+    Cada item é um dicionário como o que `campos_do_produto` devolve (nome,
+    categoria, preco, estoque, descricao, custo, multiplicador, embalagem e
+    frete). Devolve quantos produtos foram gravados.
+    """
+    linhas = []
+
+    for item in lista:
+        preco_dec, custo_dec, embalagem_dec = _preco_final(
+            item["preco"], item["custo"], item["multiplicador"], item["embalagem"]
+        )
+        frete_dec = dinheiro.para_decimal(item["frete"] or 0)
+
+        linhas.append((
+            item["nome"], item["categoria"], dinheiro.para_centavos(preco_dec),
+            item["estoque"], item["descricao"],
+            dinheiro.para_centavos(custo_dec), item["multiplicador"] or 0,
+            None, dinheiro.para_centavos(embalagem_dec),
+            dinheiro.para_centavos(frete_dec),
+        ))
+
+    # um único "with": se qualquer INSERT falhar, nada é gravado
+    with closing(banco.conectar()) as conexao, conexao:
+        conexao.executemany(
+            """
+            INSERT INTO produtos
+            (nome, categoria, preco_centavos, estoque, descricao,
+             custo_centavos, multiplicador, foto,
+             embalagem_centavos, frete_centavos)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            linhas,
+        )
+
+    return len(linhas)
