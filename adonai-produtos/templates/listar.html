@@ -13,7 +13,13 @@
 
   <a class="botao" href="{{ url_for('produtos.novo') }}">Novo produto</a>
 </div>
-
+<div class="exportar">
+  <a class="botao" href="{{ url_for('produtos.exportar', formato='xlsx', q=termo or None) }}">Exportar Excel (.xlsx)</a>
+  <a class="botao" href="{{ url_for('produtos.exportar', formato='csv', q=termo or None) }}">Exportar CSV</a>
+  {% if termo %}
+  <span class="exportar-aviso">Exportando só os produtos da busca: {{ termo }}</span>
+  {% endif %}
+</div>
 <table>
   <thead>
     <tr>
