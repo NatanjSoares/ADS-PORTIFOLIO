@@ -1,7 +1,11 @@
-"""Rotas de produtos: página inicial, lista, cadastro, edição e exclusão."""
+"""Rotas de produtos: página inicial, lista, cadastro, edição, exclusão e exportação."""
+
+from datetime import date
 
 from flask import (
     Blueprint,
+    Response,
+    abort,
     current_app,
     flash,
     redirect,
@@ -11,10 +15,19 @@ from flask import (
 )
 
 from adonai.dados import produtos
-from adonai.regras import fotos
+from adonai.regras import exportacao, fotos
 from adonai.regras.validacao import campos_do_produto, validar_formulario
 
 bp = Blueprint("produtos", __name__)
+
+# formato -> (função que gera o arquivo, tipo do arquivo)
+FORMATOS_EXPORTACAO = {
+    "xlsx": (
+        exportacao.gerar_xlsx,
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ),
+    "csv": (exportacao.gerar_csv, "text/csv; charset=utf-8"),
+}
 
 
 @bp.route("/")
@@ -158,3 +171,30 @@ def excluir(produto_id):
         flash("Produto não encontrado.", "erro")
 
     return redirect(url_for("produtos.listar"))
+
+@bp.route("/produtos/exportar/<formato>")
+def exportar(formato):
+    """EXPORTAR — baixa os produtos da lista (respeitando a busca) em xlsx ou csv."""
+
+    if formato not in FORMATOS_EXPORTACAO:
+        abort(404)
+
+    gerar, tipo = FORMATOS_EXPORTACAO[formato]
+    termo = request.args.get("q", "").strip()
+
+    dados = (
+        produtos.buscar_por_nome(termo)
+        if termo
+        else produtos.listar_todos()
+    )
+
+    nome_arquivo = f"produtos-{date.today().isoformat()}.{formato}"
+
+    return Response(
+        gerar(dados),
+        content_type=tipo,
+        headers={
+            "Content-Disposition": f'attachment; filename="{nome_arquivo}"',
+            "Cache-Control": "no-store",
+        },
+    )
