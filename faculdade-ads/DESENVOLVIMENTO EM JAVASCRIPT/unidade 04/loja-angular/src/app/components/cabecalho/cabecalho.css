@@ -1,0 +1,41 @@
+.cabecalho {
+  background-color: #1f2937;
+  color: white;
+  padding: 20px;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.cabecalho h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.cabecalho nav {
+  display: flex;
+  gap: 20px;
+}
+
+.cabecalho a {
+  color: white;
+  text-decoration: none;
+}
+
+.cabecalho a:hover {
+  color: #38bdf8;
+}
+
+/* Destaque do menu ativo */
+.cabecalho nav a.ativo {
+  background-color: #ffffff;
+  color: #1d4ed8;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 8px 12px;
+}

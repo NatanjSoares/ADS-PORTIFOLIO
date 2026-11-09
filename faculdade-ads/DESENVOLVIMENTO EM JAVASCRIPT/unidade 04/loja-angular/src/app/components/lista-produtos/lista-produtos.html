@@ -1,0 +1,23 @@
+<section class="lista-produtos">
+
+  <h2>Produtos disponíveis</h2>
+
+  <div *ngIf="produtos.length === 0">
+    <p>Nenhum produto cadastrado.</p>
+  </div>
+
+  <div
+    class="produto"
+    *ngFor="let produto of produtos"
+  >
+    <h3>{{ produto.nome }}</h3>
+
+    <p>
+      Preço: {{ produto.preco | currency:'BRL' }}
+    </p>
+
+    <p>{{ produto.descricao }}</p>
+
+  </div>
+
+</section>

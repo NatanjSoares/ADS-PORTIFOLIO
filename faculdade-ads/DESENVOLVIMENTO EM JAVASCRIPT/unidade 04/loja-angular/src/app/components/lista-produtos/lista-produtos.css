@@ -1,0 +1,30 @@
+.lista-produtos {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.lista-produtos h2 {
+  text-align: center;
+  color: #1f2937;
+  margin-bottom: 25px;
+}
+
+.produto {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.produto h3 {
+  color: #1f2937;
+  margin-bottom: 10px;
+}
+
+.produto p {
+  color: #475569;
+  margin-bottom: 8px;
+}
