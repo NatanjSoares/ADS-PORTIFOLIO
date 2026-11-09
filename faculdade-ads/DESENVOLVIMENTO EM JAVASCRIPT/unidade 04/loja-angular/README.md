@@ -93,11 +93,11 @@ As imagens a seguir apresentam os registros das etapas de desenvolvimento, imple
 
 ### Evidência 02 — Estrutura do projeto
 
-![Evidência 02 — Estrutura do projeto](docs/evidencias/evidencia_02_estrutura_projeto.png)
+![Evidência 02 — Execução do Angular](docs/evidencias/evidencia_02_execucao_angular.png)
 
 ### Evidência 03 — Criação dos componentes
 
-![Evidência 03 — Criação dos componentes](docs/evidencias/evidencia_03_criacao_componentes.png)
+![Evidência 03 — Criação dos componentes](docs/evidencias/evidencia_03_criacao_componente.png)
 
 ### Evidência 04 — Configuração das rotas
 
