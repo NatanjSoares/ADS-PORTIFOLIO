@@ -1,59 +1,143 @@
-# LojaAngular
+# Loja Angular
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.6.
+Aplicação web desenvolvida como atividade prática da disciplina **Desenvolvimento em JavaScript**, da graduação em Análise e Desenvolvimento de Sistemas da Universidade Anhanguera.
 
-## Development server
+O projeto consiste em uma loja virtual simples, desenvolvida com Angular, permitindo cadastrar, visualizar e excluir produtos. Os dados são armazenados no navegador por meio do `localStorage`.
 
-To start a local development server, run:
+## 1. Objetivo do projeto
+
+Desenvolver uma aplicação utilizando Angular, aplicando conceitos de componentes, módulos, rotas, formulários, vinculação de dados e armazenamento local.
+
+## 2. Tecnologias utilizadas
+
+- Angular
+- TypeScript
+- HTML5
+- CSS3
+- Node.js
+- npm
+- Visual Studio Code
+- Git e GitHub
+- localStorage
+
+## 3. Funcionalidades
+
+- Cadastro de produtos.
+- Validação dos campos do formulário.
+- Exibição dos produtos cadastrados.
+- Exclusão de produtos.
+- Formatação dos preços em Real (R$).
+- Armazenamento dos dados no navegador.
+- Navegação entre páginas utilizando Angular Router.
+- Persistência dos registros após atualizar a página.
+
+## 4. Estrutura dos componentes
+
+A aplicação foi organizada em componentes para separar as responsabilidades:
+
+| Componente | Responsabilidade |
+|---|---|
+| Cabecalho | Apresentação do título e menu de navegação. |
+| CadastroProduto | Cadastro e exclusão de produtos. |
+| ListaProdutos | Exibição dos produtos cadastrados. |
+| App | Componente principal da aplicação. |
+
+## 5. Rotas da aplicação
+
+| Rota | Página |
+|---|---|
+| `/` | Página inicial e cadastro de produtos. |
+| `/produtos` | Listagem dos produtos cadastrados. |
+
+## 6. Como executar o projeto
+
+É necessário ter o Node.js e o npm instalados.
+
+Clone o repositório:
 
 ```bash
-ng serve
+git clone https://github.com/NatanjSoares/ADS-PORTIFOLIO.git
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Acesse a pasta do projeto:
 
 ```bash
-ng generate component component-name
+cd "ADS-PORTIFOLIO/faculdade-ads/DESENVOLVIMENTO EM JAVASCRIPT/unidade 04/loja-angular"
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Instale as dependências:
 
 ```bash
-ng generate --help
+npm install
 ```
 
-## Building
-
-To build the project run:
+Inicie a aplicação:
 
 ```bash
-ng build
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Acesse pelo navegador:
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
+```text
+http://localhost:4200/
 ```
 
-## Running end-to-end tests
+## 7. Evidências de desenvolvimento
 
-For end-to-end (e2e) testing, run:
+As imagens a seguir apresentam os registros das etapas de desenvolvimento, implementação e testes da aplicação Loja Angular.
 
-```bash
-ng e2e
-```
+### Evidência 01 — Criação do projeto
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+![Evidência 01 — Criação do projeto](docs/evidencias/evidencia_01_criacao_projeto.png)
 
-## Additional Resources
+### Evidência 02 — Estrutura do projeto
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+![Evidência 02 — Estrutura do projeto](docs/evidencias/evidencia_02_estrutura_projeto.png)
+
+### Evidência 03 — Criação dos componentes
+
+![Evidência 03 — Criação dos componentes](docs/evidencias/evidencia_03_criacao_componentes.png)
+
+### Evidência 04 — Configuração das rotas
+
+![Evidência 04 — Configuração das rotas](docs/evidencias/evidencia_04_configuracao_rotas.png)
+
+### Evidência 05 — Desenvolvimento do cadastro
+
+![Evidência 05 — Desenvolvimento do cadastro](docs/evidencias/evidencia_05_cadastro_produto.png)
+
+### Evidência 06 — Cadastro de produtos
+
+![Evidência 06 — Cadastro de produtos](docs/evidencias/evidencia_06_cadastro_funcionando.png)
+
+### Evidência 07 — Listagem de produtos
+
+![Evidência 07 — Listagem de produtos](docs/evidencias/evidencia_07_lista_produtos.png)
+
+### Evidência 08 — Exclusão de produtos
+
+![Evidência 08 — Exclusão de produtos](docs/evidencias/evidencia_08_exclusao_produto.png)
+
+### Evidência 09 — Armazenamento com localStorage
+
+![Evidência 09 — Armazenamento localStorage](docs/evidencias/evidencia_09_localstorage.png)
+
+### Evidência 10 — Teste de navegação e aplicação
+
+![Evidência 10 — Teste de navegação](docs/evidencias/evidencia_10_navegacao_aplicacao.png)
+### Evidência 11 — Documentação do projeto
+
+![Evidência 11 — Documentação do projeto](docs/evidencias/evidencia_11_documentacao_readme.png)
+
+## 8. Repositório
+
+O código-fonte completo está disponível no GitHub:
+
+[ADS-PORTIFOLIO — Loja Angular](https://github.com/NatanjSoares/ADS-PORTIFOLIO/tree/main/faculdade-ads/DESENVOLVIMENTO%20EM%20JAVASCRIPT/unidade%2004/loja-angular)
+
+## 9. Considerações finais
+
+O desenvolvimento desta aplicação permitiu colocar em prática conceitos fundamentais do Angular, especialmente a organização por componentes, a configuração de rotas, a utilização de formulários e a persistência de dados com localStorage.
+
+A atividade contribuiu para ampliar os conhecimentos em desenvolvimento front-end e na construção de aplicações web utilizando TypeScript e Angular.
